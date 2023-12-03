@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
     InitializeWindow();
-    while(true) {
+    while(kbhit) {
         if(ismouseclick(WM_LBUTTONDOWN)) {
             //printf("%i, %i\n", mousex(), mousey());
             if(GB.MAPPED_BUTTONS[mousex()][mousey()] != 0) {
