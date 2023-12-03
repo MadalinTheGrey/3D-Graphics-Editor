@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <graphics.h>
-#include "Intialization.h"
+#include "Initialization.h"
 using namespace std;
 
 int main()
