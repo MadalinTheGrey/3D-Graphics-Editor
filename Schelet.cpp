@@ -141,8 +141,8 @@ public:
 
 	}
 
-	///uneste sectiunile corpului prin linii intre punctele corespunzatoare
-	void UnesteSectiuni()
+	///uneste sectiunile A si B ale corpului prin linii intre punctele corespunzatoare
+	void UnesteSectiuni(Sectiune A, Sectiune B)
 	{
 
 	}
