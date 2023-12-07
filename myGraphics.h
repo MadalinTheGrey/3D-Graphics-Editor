@@ -34,6 +34,7 @@ void DrawStaticRectangle(int x1, int y1, int x2, int y2, int color = WHITE) {
    }
 }
 void WriteText(int x, int y, char *text, int size = 1) {
+    //TODO new implementation
    settextstyle(8,HORIZ_DIR, size);
    outtextxy(x, y, text);
 }
