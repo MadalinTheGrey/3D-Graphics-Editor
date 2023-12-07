@@ -1,15 +1,11 @@
-#include "graphics.h"
-
+#include "myGraphics.h"
+#include "GlobalVariables.h"
+#include "Menu.h"
+void MainPanels() {
+    
+}
 void InitializeWindow()
 {
-	initwindow(1280, 720);
-}
-
-void InitializeMenuPanels()
-{
-	setfillstyle(SOLID_FILL, COLOR(35, 35, 35));
-	bar(0, 0, getmaxx(), 30);
-	setfillstyle(SOLID_FILL, COLOR(20, 20, 20));
-	bar(getmaxx() - 200, 30, getmaxx(), getmaxy());
-	bar(0, 100, 40, getmaxy() - 100);
+	CreateStartWindow(GB.window_width, GB.window_height, GB.window_name, GB.window_bg_color, GB.window_startPosX, GB.window_startPosY);
+	InitializeMenu();
 }
