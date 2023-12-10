@@ -1,8 +1,7 @@
-
-#include <graphics.h>
-#include <string>
-using namespace std;
+#include "graphics.h"
 #pragma once
+using namespace std;
+
 static class GlobalVariables{
 public:
     unsigned int window_width = 1280;
@@ -13,4 +12,5 @@ public:
     int window_startPosY = 50;
     int MAPPED_COLORS[1280][720] = {0};
     int MAPPED_BUTTONS[1280][720] =  {0};
+    int dist_obs = 600;
 }GB;
