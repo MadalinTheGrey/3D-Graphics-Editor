@@ -1,32 +1,20 @@
-#ifndef MYGRAPHICS_H
-#define MYGRAPHICS_H
+#ifndef INC_3D_EDITOR_V2_MYGRAPHICS_H
+#define INC_3D_EDITOR_V2_MYGRAPHICS_H
 #include <graphics.h>
 #include "GlobalVariables.h"
 static void InitializeWindow(int width = windowWidth, int height = windowHeight, char name[] = windowName, int bgColor = windowBgColor, int posX = windowPosX, int posY = windowPosY) {
-    /**int gdriver=0, gmode, errorCode;
+    int gdriver=0, gmode = 0, errorCode;
     detectgraph(&gdriver, &gmode);
     initgraph(&gdriver, &gmode, "");
     errorCode = graphresult();
     //error
     if (errorCode != grOk) {
         printf("Graphics error: %s\n", grapherrormsg(errorCode));
-        printf("Press any key to halt:");
-        getch();
-        exit(1);
     }
-    closegraph();**/
+    closegraph();
     initwindow(width, height, name, posX, posY);
     setbkcolor(bgColor);
     cleardevice();
-    for(int i = 0; i <= width; i++)
-        for(int j = 0; j <= height; j++)
-            colorsMapped[i][j] = bgColor;
-    printf("Successfully initialized window...\n");
-}
-static void drawRectangle(int x1, int y1, int x2, int y2, int color = BLACK, int thickness = 1, int style = SOLID_LINE) {
-    setcolor(color);
-    setlinestyle(style, 0, thickness);
-    rectangle(x1, y1, x2, y2);
 }
 static void drawFilledRectangle(int x1, int y1, int x2, int y2, int color = BLACK, int style = SOLID_FILL) {
     if(x1 < 0)
@@ -39,11 +27,8 @@ static void drawFilledRectangle(int x1, int y1, int x2, int y2, int color = BLAC
         y2 = getmaxy();
     setfillstyle(SOLID_FILL, color);
     bar(x1, y1, x2, y2);
-    for(int i = x1; i <= x2; i++)
-        for(int j = y1; j <= y2; j++)
-            colorsMapped[i][j] = color;
 }
-void drawLine(int x1, int y1, int x2, int y2, int color = BLACK, int thickness = 1, int style = SOLID_LINE) {
+static void drawLine(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE) {
     setcolor(color);
     setlinestyle(style, 0, thickness);
     line(x1, y1, x2, y2);
@@ -57,10 +42,11 @@ static void writeText(int x, int y, char text[], int color = BLACK, int size = 1
     int y1 = y - textheight(text);
     int x2 = x + textwidth(text);
     int y2 = y + textheight(text);
-    if(vi == 0)
-    {setviewport(x1, y1, x2, y2, 1);
-        setbkcolor(colorsMapped[x][y]);}
+    if(vi == 0) { //Daca trebuie sa modificam culoarea bg astfel incat sa nu apara chenar negru
+        setviewport(x1, y1, x2, y2, 1);
+        setbkcolor(COLOR(35,35,35));
+    }
     outtextxy(0, 0, text);
     setviewport(0, 0, getmaxx(), getmaxy(), 1);
 }
-#endif
+#endif //INC_3D_EDITOR_V2_MYGRAPHICS_H

@@ -1,11 +1,13 @@
-#ifndef INC_3D_EDITOR_BUTTON_H
-#define INC_3D_EDITOR_BUTTON_H
+#ifndef INC_3D_EDITOR_V2_BUTTON_H
+#define INC_3D_EDITOR_V2_BUTTON_H
+
 #include <utility>
 #include <vector>
 #include <functional>
 #include <cstdio>
 #include <string>
 #include "myGraphics.h"
+
 class Button {
 public:
     std::string name;
@@ -20,6 +22,7 @@ public:
     std::function<void()> drawButton;
     std::function<void()> onClick;
 };
+//TODO transforma din vector STL in vector dinamic si muta in GB?
 std::vector<Button> buttons;
 
 static void InitializeButtons() {
@@ -47,12 +50,11 @@ static void InitializeButtons() {
     };
     openFileButton.drawButton();
     buttons.push_back(openFileButton);
-    printf("Successfully initialized buttons...\n");
 }
+
 void checkIfButtonClicked(int x, int y) {
-    printf("Mouse is clicked at %i, %i...\n", x, y);
     for(auto & button : buttons)
         if(x >= button.x1 && x <= button.x2 && y >= button.y1 && y <= button.y2)
             button.onClick();
 }
-#endif //INC_3D_EDITOR_BUTTON_H
+#endif //INC_3D_EDITOR_V2_BUTTON_H

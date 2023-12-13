@@ -1,21 +1,20 @@
-#include <cstdio>
+#include <iostream>
 #include "myGraphics.h"
 #include "Interface.h"
-#include "Corp.h"
-#include "FilesManager.h"
 #include "Render3D.h"
-#include <iostream>
+
 using namespace std;
 
 int main() {
-    printf("Starting program...\n");
     InitializeWindow();
     InitializeInterface();
     registermousehandler(WM_LBUTTONDOWN, checkIfButtonClicked);
     render3D();
-    getch();
+    return 0;
 }
-//TODO Lines
-//TODO Modify interface
-//TODO WriteToFile
-//TODO Border Control
+//TODO transforma din vector STL in vector dinamic si muta in GB? Button 25
+//TODO new file implementation Button 36
+//TODO open file implementation Button 47
+//TODO for string too myGraphics.h 37 OPTIONAL, maybe delete
+//TODO write to file
+//TODO offset Render3D.h 15

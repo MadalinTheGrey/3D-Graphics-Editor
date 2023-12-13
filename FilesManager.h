@@ -1,51 +1,60 @@
-//
-// Created by andrei
-//
+#ifndef INC_3D_EDITOR_V2_FILESMANAGER_H
+#define INC_3D_EDITOR_V2_FILESMANAGER_H
 
-#ifndef INC_3D_EDITOR_FILESMANAGER_H
-#define INC_3D_EDITOR_FILESMANAGER_H
-
+#include <graphics.h>
 #include <fstream>
-#include <vector>
-#include <string>
 #include "Corp.h"
-Scena readFromFile(const std::string& fileName = "D://Andrei//Desktop//My Projects//3D Editor//Saved//corp1.txt") {
-    std::ifstream fin(fileName);
-    std::string read1,read2, r1, r2, r3;
-    if(!fin.is_open())
+using namespace std;
+Corp readFromFile(char path[]) {
+    Punct3D pcte[] = {
+            Punct3D(100, 100, 100),
+            Punct3D(100, 200, 100),
+            Punct3D(200, 200, 100),
+            Punct3D(200, 100, 100),
+            Punct3D(100, 100, 200),
+            Punct3D(100, 200, 200),
+            Punct3D(200, 200, 200),
+            Punct3D(200, 100, 200)
+    };
+    Linie lnii[] = {
+            Linie(0, 1),
+            Linie(1, 2),
+            Linie(2, 3),
+            Linie(3, 0),
+            Linie(4, 5),
+            Linie(5, 6),
+            Linie(6, 7),
+            Linie(7, 4),
+            Linie(4, 0),
+            Linie(5, 1),
+            Linie(6, 2),
+            Linie(7, 3)
+    };
+    Corp C(8, 12, 2, pcte, lnii);
+    return C;
+    /**ifstream fin(path);
+    string read, r1, r2, r3;
+    Corp corp = Corp();
+    Linie linii[100]; int indexLinii = 0;
+    Punct3D puncte[100]; int indexPuncte = 0;
+    if(!fin.is_open()) {
         printf("Error opening file!\n");
-    Scena scena = Scena();
-    while(fin >> read1) {
-        if(read1 == "Name:") {
-            fin >> r1;
-            scena.name = r1;
-        }else if(read1 == "Corp:") {
-            fin >> r1;
-            Corp corp = Corp();
-            corp.name = r1;
-            fin >> read2;
-            while(read2 != "EndCorp") {
-                if(read2 == "Punct:") {
-                    fin >> r1 >> r2 >> r3;
-                    Punct3D punct = Punct3D();
-                    punct.x = std::stoi(r1);
-                    punct.y = std::stoi(r2);
-                    punct.z = std::stoi(r3);
-                    corp.puncte3D.push_back(punct);
-                }else if(read2 == "Linie:") {
-                    fin >> r1 >> r2;
-                    Linie linie = Linie();
-                    linie.pointA = std::stoi(r1);
-                    linie.pointB = std::stoi(r2);
-                    corp.linii.push_back(linie);
-                }
-                fin >> read2;
-            }
-            scena.corpuri.push_back(corp);
+        return corp;
+    }
+    while(fin >> read) {
+        if(read == "Punct:") {
+            fin >> r1 >> r2 >> r3;
+            puncte[indexPuncte++] = {stoi(r1), stoi(r2), stoi(r3)};
+        } else if(read == "Linie:") {
+            fin >> r1 >> r2;
+            linii[indexLinii++] = {stoi(r1), stoi(r2)};
         }
     }
-    fin.close();
-    return scena;
+    corp.puncte = puncte;
+    corp.linii = linii;
+    corp.nr_puncte = indexPuncte;
+    corp.nr_linii = indexLinii;
+    return corp;**/
 }
 
-#endif //INC_3D_EDITOR_FILESMANAGER_H
+#endif //INC_3D_EDITOR_V2_FILESMANAGER_H

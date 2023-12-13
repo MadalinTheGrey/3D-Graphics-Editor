@@ -1,76 +1,78 @@
-//
-// Created by andre on 12/11/2023.
-//
+#ifndef INC_3D_EDITOR_V2_RENDER3D_H
+#define INC_3D_EDITOR_V2_RENDER3D_H
 
-#ifndef INC_3D_EDITOR_RENDER3D_H
-#define INC_3D_EDITOR_RENDER3D_H
+#include <iostream>
+#include "Corp.h"
 #include "FilesManager.h"
-#include "myGraphics.h"
-void renderAdditionallyLines(int x1, int y1, int x2, int y2, int offset){
-    for(int i=100-offset; i<=x2; i+=100) {
-        drawLine(i, y1, i, y2, COLOR(50, 50, 50), 1, DOTTED_LINE);
-        //writeText(i,y1, "i", COLOR(50, 50, 50), 1, 1);
-    }
-    for(int i=100; i<=y2; i+=100)
-        drawLine(x1, i, x2, i, COLOR(50,50,50), 1, DOTTED_LINE);
-}
 
 void render3D() {
-    int offset = 0;
-    int zoom = 100;
+    Corp corp = Corp();
+    corp = readFromFile("D:\\Andrei\\Desktop\\My Projects\\3D Editor V2\\SavedObjects\\Corp1.txt");
+
     setviewport(0, 30, 1080, 720, 1);
     setbkcolor(BLACK);
     clearviewport();
-    Scena scena = readFromFile();
-    renderAdditionallyLines(0, 0, getmaxx(), getmaxy(), 0);
-    for(auto corp : scena.corpuri)
-        corp.AfisareCorp();
-    while(GetAsyncKeyState(VK_ESCAPE) == 0) {
-        printf("Waiting for input...\n");
-        //delay(100);
-        char c = (char) getch();
-        if(c != 0) {
-            printf("Pressed %c\n", c);
-            if(c == 'a')
-                offset+=20;
-            else if(c == 'd')
-                offset-=20;
-            else if(c == 'x')
-                zoom+=100;
-            else if(c == 'z')
-                zoom-=100;
-            clearviewport();
-            renderAdditionallyLines(0,0, getmaxx(), getmaxy(), offset);
-            for(auto corp : scena.corpuri) {
-                corp.AfisareCorp(offset, zoom);
+    //int offsetX = 0, offsetY = 0; //TODO OFFSET
+    //renderAdditionallyLines(0, 0, getmaxx(), getmaxy(), offsetX, offsetY, zoom);
+    corp.AfisareCorp();
+    while(true) {
+        if(GetAsyncKeyState(VK_ESCAPE) != 0)
+            break;
+        else if(GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState(VK_UP) || GetAsyncKeyState(VK_DOWN)
+                || GetAsyncKeyState(0x57) || GetAsyncKeyState(	0x53) || GetAsyncKeyState(	0x41) || GetAsyncKeyState(0x44) ||
+                GetAsyncKeyState(0x5A) || GetAsyncKeyState(0x58) || GetAsyncKeyState(0x46) || GetAsyncKeyState(0x47)
+                || GetAsyncKeyState(0x31) || GetAsyncKeyState(0x32) || GetAsyncKeyState(0x33) || GetAsyncKeyState(0x34)
+                || GetAsyncKeyState(0x35) || GetAsyncKeyState(0x36)) {
+            if(GetAsyncKeyState(VK_LEFT)) {
+                for(int i=0; i<corp.nr_puncte; ++i)
+                    corp.puncte[i].x -= 10;
+            } if(GetAsyncKeyState(VK_RIGHT)) {
+                for(int i=0; i<corp.nr_puncte; ++i)
+                    corp.puncte[i].x += 10;
+            } if(GetAsyncKeyState(VK_UP)) {
+                for(int i=0; i<corp.nr_puncte; ++i)
+                    corp.puncte[i].y -= 10;
+            } if(GetAsyncKeyState(VK_DOWN)) {
+                for(int i=0; i<corp.nr_puncte; ++i)
+                    corp.puncte[i].y += 10;
+            } if(GetAsyncKeyState(0x57)) { //W
+                //offsetY+=10;
+            } if(GetAsyncKeyState(	0x53)) { //S
+                //offsetY-=10;
+            } if(GetAsyncKeyState(	0x41)) { //A
+                //offsetX+=10;
+            } if(GetAsyncKeyState(0x44)) {
+                //offsetX-=10;
+            } if(GetAsyncKeyState(0x5A)) {
+                for(int i=0; i<corp.nr_puncte; ++i)
+                    corp.puncte[i].z -= 10;
+            } if(GetAsyncKeyState(0x58)) {
+                for(int i=0; i<corp.nr_puncte; ++i)
+                    corp.puncte[i].z += 10;
+            } if(GetAsyncKeyState(0x46)) {
+                zoom+=0.01;
+            } if(GetAsyncKeyState(0x47)) {
+                zoom-=0.01;
+            } if(GetAsyncKeyState(0x31)) {
+                corp.RotesteXPoz();
+            } if(GetAsyncKeyState(0x32)) {
+                corp.RotesteXNeg();
+            } if(GetAsyncKeyState(0x33)) {
+                corp.RotesteYPoz();
+            } if(GetAsyncKeyState(0x34)) {
+                corp.RotesteYNeg();
+            } if(GetAsyncKeyState(0x35)) {
+                corp.RotesteZPoz();
+            } if(GetAsyncKeyState(0x36)) {
+                corp.RotesteZNeg();
             }
-        }
-        else {
-            c = (char) getch();
-            if(c == KEY_UP) {
-                for(auto & corp : scena.corpuri)
-                    for(auto & punct : corp.puncte3D)
-                        punct.y-=7;
-            }else if(c == KEY_DOWN) {
-                for(auto & corp : scena.corpuri)
-                    for(auto & punct : corp.puncte3D)
-                        punct.y+=7;
-            }else if(c == KEY_LEFT) {
-                for(auto & corp : scena.corpuri)
-                    for(auto & punct : corp.puncte3D)
-                        punct.x-=7;
-            }else if(c == KEY_RIGHT) {
-                for(auto & corp : scena.corpuri)
-                    for(auto & punct : corp.puncte3D)
-                        punct.x+=7;
-            }
             clearviewport();
-            for(auto corp : scena.corpuri)
-                corp.AfisareCorp(offset, zoom);
-            renderAdditionallyLines(0,0, getmaxx(), getmaxy(), offset);
-            c=0;
+            //renderAdditionallyLines(0, 0, getmaxx(), getmaxy(), offsetX, offsetY, zoom);
+            corp.DeterminaCentru();
+            corp.AfisareCorp();
         }
+        delay(1);
     }
 }
 
-#endif //INC_3D_EDITOR_RENDER3D_H
+#endif //INC_3D_EDITOR_V2_RENDER3D_H
