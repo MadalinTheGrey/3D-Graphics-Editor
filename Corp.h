@@ -1,4 +1,5 @@
 #include "GlobalVariables.h"
+#include <math.h>
 #pragma once
 
 class Punct3D
@@ -64,28 +65,18 @@ public:
 class Linie
 {
 public:
-	Punct3D A, B;
+	int A, B; //indexurile punctelor in vectorul puncte
 
 	Linie()
 	{
-
+		A = 0;
+		B = 0;
 	}
 
-	Linie(Punct3D P1, Punct3D P2)
+	Linie(int P1, int P2)
 	{
 		A = P1;
 		B = P2;
-	}
-
-	///Deseneaza linia
-	void DrawLine()
-	{
-		Punct P1, P2;
-		P1 = P1.Punct3Dto2D(A);
-		P2 = P2.Punct3Dto2D(B);
-		P1.ConvertCoord();
-		P2.ConvertCoord();
-		line(P1.x, P1.y, P2.x, P2.y);
 	}
 };
 
@@ -126,17 +117,23 @@ public:
 class Corp
 {
 public:
-	int nr_puncte, nr_linii; ///numarul de puncte si numarul de linii ale corpului
-	int sectiune_curenta; ///sectiunea in care se deseneaza in momentul de fata
-	int nr_sectiuni; ///numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
+	int nr_puncte, nr_linii; // numarul de puncte si numarul de linii ale corpului
+	int sectiune_curenta; // sectiunea in care se deseneaza in momentul de fata
+	int nr_sectiuni; // numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
+	Punct3D centru; // centrul corpului
+	double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
+	// intr-un cub caruia ii vom determina centrul
 	Sectiune* sectiuni;
 	Punct3D* puncte;
 	Linie* linii;
 
 	Corp()
 	{
-		nr_puncte = 0;
-		nr_linii = 0;
+		tx = ty = tz = 1280;
+		lx = ly = lz = 0;
+		centru = { 0, 0, 0 };
+		nr_puncte = 1;
+		nr_linii = 1;
 		sectiune_curenta = 0;
 		nr_sectiuni = 1;
 		sectiuni = new Sectiune[nr_sectiuni];
@@ -146,6 +143,9 @@ public:
 
 	Corp(int nr_p, int nr_l, int nr_sect, Punct3D pcte[], Linie lni[])
 	{
+		tx = ty = tz = 1280;
+		lx = ly = lz = 0;
+		centru = { 0, 0, 0 };
 		nr_puncte = nr_p;
 		nr_linii = nr_l;
 		sectiune_curenta = 0;
@@ -157,12 +157,44 @@ public:
 			puncte[i] = pcte[i];
 		for (int i = 0; i < nr_linii; i++)
 			linii[i] = lni[i];
+		DeterminaCentru();
 	}
 
 	void AfisareCorp()
 	{
 		for (int i = 0; i < nr_linii; i++)
-			linii[i].DrawLine();
+		{
+			Punct P1, P2, TL;
+			Punct3D tl(tx, ty, lz);
+			TL = TL.Punct3Dto2D(tl);
+			TL.ConvertCoord();
+			P1 = P1.Punct3Dto2D(puncte[linii[i].A]);
+			P2 = P2.Punct3Dto2D(puncte[linii[i].B]);
+			P1.ConvertCoord();
+			P2.ConvertCoord();
+			P1.x = GB.zoom * (P1.x - TL.x) + TL.x;
+			P1.y = GB.zoom * (P1.y - TL.y) + TL.y;
+			P2.x = GB.zoom * (P2.x - TL.x) + TL.x;
+			P2.y = GB.zoom * (P2.y - TL.y) + TL.y;
+			line(P1.x, P1.y, P2.x, P2.y);
+		}
+	}
+
+	void DeterminaCentru()
+	{
+		int i;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			if (puncte[i].x < tx) tx = puncte[i].x;
+			if (puncte[i].x > lx) lx = puncte[i].x;
+			if (puncte[i].y < ty) ty = puncte[i].y;
+			if (puncte[i].y > ly) ly = puncte[i].y;
+			if (puncte[i].z < tz) tz = puncte[i].z;
+			if (puncte[i].z > lz) lz = puncte[i].z;
+		}
+		centru.x = (tx + lx) / 2;
+		centru.y = (ty + ly) / 2;
+		centru.z = (tz + lz) / 2;
 	}
 
 	///dubleaza marimea vectorului ce pastreaza sectiunile
@@ -189,57 +221,87 @@ public:
 
 	}
 
-	///uneste sectiunile corpului prin linii intre punctele corespunzatoare
-	void UnesteSectiuni()
-	{
-
-	}
-
-	///salveaza corpul reprezentat intr-un fisier
-	void SalveazaCorp()
-	{
-
-	}
-
-	///incarca un corp dintr-un fisier
-	void IncarcaCorp()
-	{
-
-	}
-
 	///va roti corpul in sensul acelor de ceasornic pe axa X
 	void RotesteXPoz()
 	{
-
+		int i;
+		double cz, cy;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			cy = puncte[i].y - centru.y;
+			cz = puncte[i].z - centru.z;
+			puncte[i].y = cos(GB.default_angle) * cy - sin(GB.default_angle) * cz + centru.y;
+			puncte[i].z = sin(GB.default_angle) * cy + cos(GB.default_angle) * cz + centru.z;
+		}
 	}
 
 	///va roti corpul in sens invers acelor de ceasornic pe axa X
 	void RotesteXNeg()
 	{
-
+		int i;
+		double cz, cy;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			cy = puncte[i].y - centru.y;
+			cz = puncte[i].z - centru.z;
+			puncte[i].y = cos(-GB.default_angle) * cy - sin(-GB.default_angle) * cz + centru.y;
+			puncte[i].z = sin(-GB.default_angle) * cy + cos(-GB.default_angle) * cz + centru.z;
+		}
 	}
 
 	///va roti corpul in sensul acelor de ceasornic pe axa Y
 	void RotesteYPoz()
 	{
-
+		int i;
+		double cz, cx;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			cx = puncte[i].x - centru.x;
+			cz = puncte[i].z - centru.z;
+			puncte[i].x = cos(GB.default_angle) * cx - sin(GB.default_angle) * cz + centru.x;
+			puncte[i].z = sin(GB.default_angle) * cx + cos(GB.default_angle) * cz + centru.z;
+		}
 	}
 
 	///va roti corpul in sens invers acelor de ceasornic pe axa Y
 	void RotesteYNeg()
 	{
-
+		int i;
+		double cz, cx;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			cx = puncte[i].x - centru.x;
+			cz = puncte[i].z - centru.z;
+			puncte[i].x = cos(-GB.default_angle) * cx - sin(-GB.default_angle) * cz + centru.x;
+			puncte[i].z = sin(-GB.default_angle) * cx + cos(-GB.default_angle) * cz + centru.z;
+		}
 	}
 
 	///va roti corpul in sensul acelor de ceasornic pe axa Z
 	void RotesteZPoz()
 	{
-
+		int i;
+		double cy, cx;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			cx = puncte[i].x - centru.x;
+			cy = puncte[i].y - centru.y;
+			puncte[i].x = cos(GB.default_angle) * cx - sin(GB.default_angle) * cy + centru.x;
+			puncte[i].y = sin(GB.default_angle) * cx + cos(GB.default_angle) * cy + centru.y;
+		}
 	}
 
 	///va roti corpul in sens invers acelor de ceasornic pe axa Z
 	void RotesteZNeg()
 	{
-
+		int i;
+		double cy, cx;
+		for (i = 0; i < nr_puncte; i++)
+		{
+			cx = puncte[i].x - centru.x;
+			cy = puncte[i].y - centru.y;
+			puncte[i].x = cos(-GB.default_angle) * cx - sin(-GB.default_angle) * cy + centru.x;
+			puncte[i].y = sin(-GB.default_angle) * cx + cos(-GB.default_angle) * cy + centru.y;
+		}
 	}
 };
