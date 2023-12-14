@@ -1,5 +1,6 @@
 #include "GlobalVariables.h"
 #include <math.h>
+#include <string>
 #pragma once
 
 class Punct3D
@@ -41,8 +42,8 @@ public:
 	Punct Punct3Dto2D(Punct3D A)
 	{
 		Punct P;
-		P.x_real = A.x * GB.dist_obs / (GB.dist_obs + A.z);
-		P.y_real = A.y * GB.dist_obs / (GB.dist_obs + A.z);
+		P.x_real = A.x * dist_obs / (dist_obs + A.z);
+		P.y_real = A.y * dist_obs / (dist_obs + A.z);
 		return P;
 	}
 	
@@ -117,6 +118,7 @@ public:
 class Corp
 {
 public:
+	std::string name;
 	int nr_puncte, nr_linii; // numarul de puncte si numarul de linii ale corpului
 	int sectiune_curenta; // sectiunea in care se deseneaza in momentul de fata
 	int nr_sectiuni; // numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
@@ -129,6 +131,7 @@ public:
 
 	Corp()
 	{
+		name = "";
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
@@ -141,8 +144,9 @@ public:
 		linii = new Linie[nr_linii];
 	}
 
-	Corp(int nr_p, int nr_l, int nr_sect, Punct3D pcte[], Linie lni[])
+	Corp(int nr_p, int nr_l, int nr_sect, Punct3D pcte[], Linie lni[], std::string nume)
 	{
+		name = nume;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
@@ -172,10 +176,10 @@ public:
 			P2 = P2.Punct3Dto2D(puncte[linii[i].B]);
 			P1.ConvertCoord();
 			P2.ConvertCoord();
-			P1.x = GB.zoom * (P1.x - TL.x) + TL.x;
-			P1.y = GB.zoom * (P1.y - TL.y) + TL.y;
-			P2.x = GB.zoom * (P2.x - TL.x) + TL.x;
-			P2.y = GB.zoom * (P2.y - TL.y) + TL.y;
+			P1.x = zoom * (P1.x - TL.x) + TL.x - offsetX;
+			P1.y = zoom * (P1.y - TL.y) + TL.y - offsetY;
+			P2.x = zoom * (P2.x - TL.x) + TL.x - offsetX;
+			P2.y = zoom * (P2.y - TL.y) + TL.y - offsetY;
 			line(P1.x, P1.y, P2.x, P2.y);
 		}
 	}
@@ -183,6 +187,8 @@ public:
 	void DeterminaCentru()
 	{
 		int i;
+		tx = ty = tz = 1280;
+		lx = ly = lz = 0;
 		for (i = 0; i < nr_puncte; i++)
 		{
 			if (puncte[i].x < tx) tx = puncte[i].x;
@@ -230,8 +236,8 @@ public:
 		{
 			cy = puncte[i].y - centru.y;
 			cz = puncte[i].z - centru.z;
-			puncte[i].y = cos(GB.default_angle) * cy - sin(GB.default_angle) * cz + centru.y;
-			puncte[i].z = sin(GB.default_angle) * cy + cos(GB.default_angle) * cz + centru.z;
+			puncte[i].y = cos(default_angle) * cy - sin(default_angle) * cz + centru.y;
+			puncte[i].z = sin(default_angle) * cy + cos(default_angle) * cz + centru.z;
 		}
 	}
 
@@ -244,8 +250,8 @@ public:
 		{
 			cy = puncte[i].y - centru.y;
 			cz = puncte[i].z - centru.z;
-			puncte[i].y = cos(-GB.default_angle) * cy - sin(-GB.default_angle) * cz + centru.y;
-			puncte[i].z = sin(-GB.default_angle) * cy + cos(-GB.default_angle) * cz + centru.z;
+			puncte[i].y = cos(-default_angle) * cy - sin(-default_angle) * cz + centru.y;
+			puncte[i].z = sin(-default_angle) * cy + cos(-default_angle) * cz + centru.z;
 		}
 	}
 
@@ -258,8 +264,8 @@ public:
 		{
 			cx = puncte[i].x - centru.x;
 			cz = puncte[i].z - centru.z;
-			puncte[i].x = cos(GB.default_angle) * cx - sin(GB.default_angle) * cz + centru.x;
-			puncte[i].z = sin(GB.default_angle) * cx + cos(GB.default_angle) * cz + centru.z;
+			puncte[i].x = cos(default_angle) * cx - sin(default_angle) * cz + centru.x;
+			puncte[i].z = sin(default_angle) * cx + cos(default_angle) * cz + centru.z;
 		}
 	}
 
@@ -272,8 +278,8 @@ public:
 		{
 			cx = puncte[i].x - centru.x;
 			cz = puncte[i].z - centru.z;
-			puncte[i].x = cos(-GB.default_angle) * cx - sin(-GB.default_angle) * cz + centru.x;
-			puncte[i].z = sin(-GB.default_angle) * cx + cos(-GB.default_angle) * cz + centru.z;
+			puncte[i].x = cos(-default_angle) * cx - sin(-default_angle) * cz + centru.x;
+			puncte[i].z = sin(-default_angle) * cx + cos(-default_angle) * cz + centru.z;
 		}
 	}
 
@@ -286,8 +292,8 @@ public:
 		{
 			cx = puncte[i].x - centru.x;
 			cy = puncte[i].y - centru.y;
-			puncte[i].x = cos(GB.default_angle) * cx - sin(GB.default_angle) * cy + centru.x;
-			puncte[i].y = sin(GB.default_angle) * cx + cos(GB.default_angle) * cy + centru.y;
+			puncte[i].x = cos(default_angle) * cx - sin(default_angle) * cy + centru.x;
+			puncte[i].y = sin(default_angle) * cx + cos(default_angle) * cy + centru.y;
 		}
 	}
 
@@ -300,8 +306,32 @@ public:
 		{
 			cx = puncte[i].x - centru.x;
 			cy = puncte[i].y - centru.y;
-			puncte[i].x = cos(-GB.default_angle) * cx - sin(-GB.default_angle) * cy + centru.x;
-			puncte[i].y = sin(-GB.default_angle) * cx + cos(-GB.default_angle) * cy + centru.y;
+			puncte[i].x = cos(-default_angle) * cx - sin(-default_angle) * cy + centru.x;
+			puncte[i].y = sin(-default_angle) * cx + cos(-default_angle) * cy + centru.y;
 		}
+	}
+};
+
+class Scena
+{
+public:
+	int nr_corpuri;
+	int max_corpuri;
+	Corp* corpuri;
+
+	Scena()
+	{
+		nr_corpuri = 0;
+		max_corpuri = 100;
+		corpuri = new Corp[max_corpuri];
+	}
+
+	Scena(std::string nume, int nr_corp, Corp C[])
+	{
+		nr_corpuri = nr_corp;
+		max_corpuri = 100;
+		corpuri = new Corp[max_corpuri];
+		for (int i = 0; i < nr_corpuri; i++)
+			corpuri[i] = C[i];
 	}
 };
