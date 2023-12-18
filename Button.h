@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <string>
 #include "myGraphics.h"
+#include "corp"
 
 class Button {
 public:
@@ -61,7 +62,11 @@ static void InitializeButtons() {
         };
     new_3D_form.onClick = []()
         {
-            /// How do we access scena s?
+            S.nr_corpuri++;
+            if (S.nr_corpuri >= S.max_corpuri)
+                S.DoubleCorpuri();
+            Corp C;
+            S.corpuri[S.nr_corpuri - 1] = C;
         };
     new_3D_form.drawButton();
     buttons.push_back(new_3D_form);
@@ -92,7 +97,7 @@ void checkMouseClick(int x, int y) {
     if (!is_button)
     {
         if (buttons[last_clicked_button].name == "Draw Line")
-            ; ///How do we access the current form to draw in it?
+            ; 
     }
 
 }
