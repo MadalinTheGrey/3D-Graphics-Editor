@@ -12,6 +12,6 @@ int main()
 {
     InitializeWindow();
     InitializeInterface();
-    registermousehandler(WM_LBUTTONDOWN, checkIfButtonClicked);
+    registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
     LoadFromFile();
 }
