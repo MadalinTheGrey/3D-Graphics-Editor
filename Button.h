@@ -65,11 +65,35 @@ static void InitializeButtons() {
         };
     new_3D_form.drawButton();
     buttons.push_back(new_3D_form);
+
+    //Draw Line button
+    Button draw_line = *new Button("Draw Line", 0, 100, 40, 140);
+    draw_line.drawButton = []()
+        {
+            drawLine(0, 140, 40, 140, COLOR(118, 118, 118), 1);
+            drawLine(30, 110, 10, 130);
+        };
+    draw_line.onClick = []()
+        {
+            last_clicked_button = 3;
+        };
+    draw_line.drawButton();
+    buttons.push_back(new_3D_form);
 }
 
-void checkIfButtonClicked(int x, int y) {
+void checkMouseClick(int x, int y) {
+    bool is_button = false;
     for (auto& button : buttons)
         if (x >= button.x1 && x <= button.x2 && y >= button.y1 && y <= button.y2)
+        {
+            is_button = true;
             button.onClick();
+        }
+    if (!is_button)
+    {
+        if (buttons[last_clicked_button].name == "Draw Line")
+            ; ///How do we access the current form to draw in it?
+    }
+
 }
 #endif //INC_3D_EDITOR_V2_BUTTON_H
