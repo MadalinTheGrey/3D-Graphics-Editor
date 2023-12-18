@@ -1,11 +1,15 @@
+#ifndef INC_3D_EDITOR_V2_INTERFACE_H
+#define INC_3D_EDITOR_V2_INTERFACE_H
 #include "myGraphics.h"
-#include "GlobalVariables.h"
-#include "Menu.h"
-void MainPanels() {
-    
+#include "Button.h"
+
+static void InitializeMenu() {
+    drawFilledRectangle(0, 0, getmaxx(), 30, COLOR(35, 35, 35));
+    drawFilledRectangle(1080, 30, getmaxx(), getmaxy(), COLOR(20, 20, 20));
+    drawFilledRectangle(0, 100, 40, getmaxy() - 100, COLOR(20, 20, 20));
 }
-void InitializeWindow()
-{
-	CreateStartWindow(GB.window_width, GB.window_height, GB.window_name, GB.window_bg_color, GB.window_startPosX, GB.window_startPosY);
-	InitializeMenu();
+static void InitializeInterface() {
+    InitializeMenu();
+    InitializeButtons();
 }
+#endif //INC_3D_EDITOR_V2_INTERFACE_H
