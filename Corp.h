@@ -1,7 +1,9 @@
+#ifndef CORP_H
+#define CORP_H
+
 #include "GlobalVariables.h"
 #include <math.h>
 #include <string>
-#pragma once
 
 class Punct3D
 {
@@ -119,9 +121,9 @@ class Corp
 {
 public:
 	std::string name;
-	int nr_puncte, nr_linii; // numarul de puncte si numarul de linii ale corpului
+	int nr_puncte, nr_linii, max_puncte, max_linii; // numarul de puncte si numarul de linii ale corpului
 	int sectiune_curenta; // sectiunea in care se deseneaza in momentul de fata
-	int nr_sectiuni; // numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
+	int nr_sectiuni, max_sectiuni; // numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
 	Punct3D centru; // centrul corpului
 	double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
 	// intr-un cub caruia ii vom determina centrul
@@ -135,13 +137,16 @@ public:
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
-		nr_puncte = 1;
-		nr_linii = 1;
+		nr_puncte = 0;
+		max_puncte = 1;
+		nr_linii = 0;
+		max_linii = 1;
 		sectiune_curenta = 0;
-		nr_sectiuni = 1;
-		sectiuni = new Sectiune[nr_sectiuni];
-		puncte = new Punct3D[nr_puncte];
-		linii = new Linie[nr_linii];
+		nr_sectiuni = 0;
+		max_sectiuni = 1;
+		sectiuni = new Sectiune[max_sectiuni];
+		puncte = new Punct3D[max_sectiuni];
+		linii = new Linie[max_linii];
 	}
 
 	Corp(int nr_p, int nr_l, int nr_sect, Punct3D pcte[], Linie lni[], std::string nume)
@@ -151,12 +156,15 @@ public:
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
 		nr_puncte = nr_p;
+		max_puncte = nr_puncte;
 		nr_linii = nr_l;
+		max_linii = nr_linii;
 		sectiune_curenta = 0;
 		nr_sectiuni = nr_sect;
-		sectiuni = new Sectiune[nr_sectiuni];
-		puncte = new Punct3D[nr_puncte];
-		linii = new Linie[nr_linii];
+		max_sectiuni = nr_sectiuni;
+		sectiuni = new Sectiune[max_sectiuni];
+		puncte = new Punct3D[max_puncte];
+		linii = new Linie[max_linii];
 		for (int i = 0; i < nr_puncte; i++)
 			puncte[i] = pcte[i];
 		for (int i = 0; i < nr_linii; i++)
@@ -203,10 +211,43 @@ public:
 		centru.z = (tz + lz) / 2;
 	}
 
-	///dubleaza marimea vectorului ce pastreaza sectiunile
-	void GrowSectiuni()
+	//dubleaza vectorul de sectiuni
+	void DoubleSectiuni()
 	{
+		Sectiune* p = new Sectiune[max_sectiuni];
+		for (int i = 0; i < nr_sectiuni; i++)
+			p[i] = sectiuni[i];
+		max_sectiuni *= 2;
+		delete sectiuni;
+		sectiuni = new Sectiune[max_sectiuni];
+		for (int i = 0; i < nr_sectiuni; i++)
+			sectiuni[i] = p[i];
+	}
 
+	//dubleaza marimea vectorului de puncte
+	void DoublePuncte()
+	{
+		Punct3D* p = new Punct3D[max_puncte];
+		for (int i = 0; i < nr_puncte; i++)
+			p[i] = puncte[i];
+		max_puncte *= 2;
+		delete puncte;
+		puncte = new Punct3D[max_puncte];
+		for (int i = 0; i < nr_puncte; i++)
+			puncte[i] = p[i];
+	}
+
+	//dubleaza marimea vectorului de linii
+	void DoubleLinii()
+	{
+		Linie* p = new Linie[max_linii];
+		for (int i = 0; i < nr_linii; i++)
+			p[i] = linii[i];
+		max_linii *= 2;
+		delete linii;
+		linii = new Linie[max_linii];
+		for (int i = 0; i < nr_linii; i++)
+			linii[i] = p[i];
 	}
 
 	///deseneaza o linie pe ecran pentru user
@@ -322,16 +363,30 @@ public:
 	Scena()
 	{
 		nr_corpuri = 0;
-		max_corpuri = 100;
+		max_corpuri = 1;
 		corpuri = new Corp[max_corpuri];
 	}
 
-	Scena(std::string nume, int nr_corp, Corp C[])
+	Scena(int nr_corp, Corp C[])
 	{
 		nr_corpuri = nr_corp;
-		max_corpuri = 100;
+		max_corpuri = nr_corpuri;
 		corpuri = new Corp[max_corpuri];
 		for (int i = 0; i < nr_corpuri; i++)
 			corpuri[i] = C[i];
 	}
+
+	//dubleaza marimea vectorului de corpuri
+	void DoubleCorpuri()
+	{
+		Corp* p = new Corp[max_corpuri];
+		for (int i = 0; i < nr_corpuri; i++)
+			p[i] = corpuri[i];
+		max_corpuri *= 2;
+		delete corpuri;
+		corpuri = new Corp[max_corpuri];
+		for (int i = 0; i < nr_corpuri; i++)
+			corpuri[i] = p[i];
+	}
 };
+#endif // !CORP_H
