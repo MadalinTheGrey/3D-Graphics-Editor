@@ -53,11 +53,11 @@ static void InitializeButtons() {
     buttons.push_back(openFileButton);
     
     //New 3D Form button
-    Button new_3D_form = *new Button("New 3D form", 180, 0, 305, 30);
+    Button new_3D_form = *new Button("New form", 180, 0, 275, 30);
     new_3D_form.drawButton = []() 
         {
-            writeText(190, 25, "New 3D form", COLOR(182, 182, 182), 1);
-            drawLine(305, 0, 305, 30, COLOR(118, 118, 118), 1);
+            writeText(190, 25, "New form", COLOR(182, 182, 182), 1);
+            drawLine(275, 0, 275, 30, COLOR(118, 118, 118), 1);
         };
     new_3D_form.onClick = []()
         {
