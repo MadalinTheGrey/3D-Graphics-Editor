@@ -5,7 +5,7 @@
 #include "Corp.h"
 #include "FilesManager.h"
 
-void render3D(Scena S) {
+void render3D() {
     setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
     setbkcolor(BLACK);
     clearviewport();
@@ -79,8 +79,9 @@ void LoadFromFile()
     Corp corp;
     corp = readFromFile("D:\\Andrei\\Desktop\\My Projects\\3D Editor V2\\SavedObjects\\Corp1.txt");
     corpuri[0] = corp;
-    Scena S(nr_corp, corpuri);
-    render3D(S);
+    Scena Scene(nr_corp, corpuri);
+    S = Scene;
+    render3D();
 }
 
 #endif //INC_3D_EDITOR_V2_RENDER3D_H
