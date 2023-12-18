@@ -249,6 +249,12 @@ public:
 		for (int i = 0; i < nr_linii; i++)
 			linii[i] = p[i];
 	}
+	
+	//Adauga un punct in vectorul de puncte
+	void AdaugarePunct()
+	{
+
+	}
 
 	///deseneaza o linie pe ecran pentru user
 	void UserDrawLine()
@@ -376,6 +382,15 @@ public:
 			corpuri[i] = C[i];
 	}
 
+	void AdaugareCorp()
+	{
+		S.nr_corpuri++;
+		if (S.nr_corpuri >= S.max_corpuri)
+			S.DoubleCorpuri();
+		Corp C;
+		S.corpuri[S.nr_corpuri - 1] = C;
+	}
+
 	//dubleaza marimea vectorului de corpuri
 	void DoubleCorpuri()
 	{
@@ -388,5 +403,5 @@ public:
 		for (int i = 0; i < nr_corpuri; i++)
 			corpuri[i] = p[i];
 	}
-};
+} S;
 #endif // !CORP_H
