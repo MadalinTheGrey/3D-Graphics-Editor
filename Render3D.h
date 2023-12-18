@@ -11,6 +11,7 @@ void render3D(Scena S) {
     clearviewport();
     //renderAdditionallyLines(0, 0, getmaxx(), getmaxy(), offsetX, offsetY, zoom);
     Corp corp = S.corpuri[0];
+    corp.AfisareCorp();
     while(true) {
         if(GetAsyncKeyState(VK_ESCAPE) != 0)
             break;
