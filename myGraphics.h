@@ -33,6 +33,13 @@ static void drawLine(int x1, int y1, int x2, int y2, int color = WHITE, int thic
     setlinestyle(style, 0, thickness);
     line(x1, y1, x2, y2);
 }
+static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
+{
+    drawLine(x1, y1, x2, y1, color, thickness, style);
+    drawLine(x1, y1, x1, y2, color, thickness, style);
+    drawLine(x1, y2, x2, y2, color, thickness, style);
+    drawLine(x2, y1, x2, y2, color, thickness, style);
+}
 static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int vi = 0) {
     //TODO for string too
     setcolor(color);
