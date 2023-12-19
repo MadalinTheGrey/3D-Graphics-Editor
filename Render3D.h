@@ -2,6 +2,7 @@
 #define INC_3D_EDITOR_V2_RENDER3D_H
 
 #include <iostream>
+#include <vector>
 #include "Corp.h"
 #include "FilesManager.h"
 
@@ -21,17 +22,17 @@ void render3D() {
                 || GetAsyncKeyState(0x31) || GetAsyncKeyState(0x32) || GetAsyncKeyState(0x33) || GetAsyncKeyState(0x34)
                 || GetAsyncKeyState(0x35) || GetAsyncKeyState(0x36)) {
             if(GetAsyncKeyState(VK_LEFT)) {
-                for(int i=0; i<corp.nr_puncte; ++i)
-                    corp.puncte[i].x -= 10;
+                for(auto &P : corp.puncte)
+                    P.x -= 10;
             } if(GetAsyncKeyState(VK_RIGHT)) {
-                for(int i=0; i<corp.nr_puncte; ++i)
-                    corp.puncte[i].x += 10;
+                for(auto& P : corp.puncte)
+                    P.x += 10;
             } if(GetAsyncKeyState(VK_UP)) {
-                for(int i=0; i<corp.nr_puncte; ++i)
-                    corp.puncte[i].y -= 10;
+                for(auto& P : corp.puncte)
+                    P.y -= 10;
             } if(GetAsyncKeyState(VK_DOWN)) {
-                for(int i=0; i<corp.nr_puncte; ++i)
-                    corp.puncte[i].y += 10;
+                for(auto& P : corp.puncte)
+                    P.y += 10;
             } if(GetAsyncKeyState(0x57)) { //W
                 offsetY+=10;
             } if(GetAsyncKeyState(	0x53)) { //S
@@ -41,11 +42,11 @@ void render3D() {
             } if(GetAsyncKeyState(0x44)) { //D
                 offsetX-=10;
             } if(GetAsyncKeyState(0x5A)) {
-                for(int i=0; i<corp.nr_puncte; ++i)
-                    corp.puncte[i].z -= 10;
+                for(auto& P : corp.puncte)
+                    P.z -= 10;
             } if(GetAsyncKeyState(0x58)) {
-                for(int i=0; i<corp.nr_puncte; ++i)
-                    corp.puncte[i].z += 10;
+                for(auto& P : corp.puncte)
+                    P.z += 10;
             } if(GetAsyncKeyState(0x46)) { //F
                 zoom+=0.01;
             } if(GetAsyncKeyState(0x47)) { //G
@@ -74,12 +75,11 @@ void render3D() {
 
 void LoadFromFile()
 {
-    int nr_corp = 1;
-    Corp corpuri[1];
+    std::vector<Corp> corpuri;
     Corp corp;
     corp = readFromFile("D:\\Andrei\\Desktop\\My Projects\\3D Editor V2\\SavedObjects\\Corp1.txt");
-    corpuri[0] = corp;
-    Scena Scene(nr_corp, corpuri);
+    corpuri.push_back(corp);
+    Scena Scene(corpuri);
     S = Scene;
     render3D();
 }
