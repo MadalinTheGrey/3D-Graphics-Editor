@@ -22,6 +22,20 @@ public:
 		y = coord_y;
 		z = coord_z;
 	}
+
+	bool operator==(Punct3D P)
+	{
+		if (P.x == x && P.y == y && P.z == z)
+			return true;
+		return false;
+	}
+
+	bool operator!=(Punct3D P)
+	{
+		if (P.x != x || P.y != y || P.z != z)
+			return true;
+		return false;
+	}
 };
 
 class Punct
@@ -91,12 +105,26 @@ public:
 		A = P1;
 		B = P2;
 	}
+
+	bool operator==(const Linie& L)
+	{
+		if (L.A == A && L.B == B)
+			return true;
+		return false;
+	}
+
+	bool operator!=(const Linie& L)
+	{
+		if (L.A != A || L.B != B)
+			return true;
+		return false;
+	}
 };
 
 class Sectiune
 {
 public:
-	std::vector<Linie> A;
+	std::vector<Linie> linii_sect;
 	int z; ///pozitia pe axa z a sectiunii
 
 	Sectiune()
@@ -111,13 +139,37 @@ public:
 
 	Sectiune(int poz_z, std::vector<Linie> B)
 	{
-		A = move(B);
+		linii_sect = move(B);
 		z = poz_z;
+	}
+
+	bool operator==(Sectiune sect)
+	{
+		if (sect.z == z && linii_sect.size() == sect.linii_sect.size())
+		{
+			for (int i = 0; i < linii_sect.size(); i++)
+				if (linii_sect[i] != sect.linii_sect[i])
+					return false;
+			return true;
+		}
+		return false;
+	}
+
+	bool operator!=(Sectiune sect)
+	{
+		if (sect.z == z && linii_sect.size() == sect.linii_sect.size())
+		{
+			for (int i = 0; i < linii_sect.size(); i++)
+				if (linii_sect[i] != sect.linii_sect[i])
+					return true;
+			return false;
+		}
+		return true;
 	}
 
 	void AddLinie(Linie L)
 	{
-		A.push_back(L);
+		linii_sect.push_back(L);
 	}
 };
 
@@ -125,7 +177,8 @@ class Corp
 {
 public:
 	std::string name;
-	Punct3D centru; // centrul corpului
+	bool selected;
+	Punct3D centru, tl_corner, lr_corner; // centrul corpului si colturile
 	double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
 	// intr-un cub caruia ii vom determina centrul
 	std::vector<Sectiune> sectiuni;
@@ -135,6 +188,7 @@ public:
 	Corp()
 	{
 		name = "";
+		selected = false;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
@@ -143,6 +197,7 @@ public:
 	Corp(std::vector<Punct3D> pncte, std::vector<Linie> lnii, std::string nume)
 	{
 		name = nume;
+		selected = false;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
@@ -151,14 +206,55 @@ public:
 		DeterminaCentru();
 	}
 
+	bool operator==(Corp A)
+	{
+		if (A.name == name && A.lx == lx && A.ly == ly && A.lz == lz && A.tx == tx && A.ty == ty && A.tz == tz
+			&& A.centru == centru && A.sectiuni.size() == sectiuni.size() && A.linii.size() ==
+			linii.size() && A.puncte.size() == puncte.size())
+		{
+			for (int i = 0; i < sectiuni.size(); i++)
+				if (sectiuni[i] != A.sectiuni[i])
+					return false;
+			for (int i = 0; i < linii.size(); i++)
+				if (linii[i] != A.linii[i])
+					return false;
+			for (int i = 0; i < puncte.size(); i++)
+				if (puncte[i] != A.puncte[i])
+					return false;
+			return true;
+		}
+		return false;
+	}
+
+	bool operator!=(Corp A)
+	{
+		if (A.name == name && A.lx == lx && A.ly == ly && A.lz == lz && A.tx == tx && A.ty == ty && A.tz == tz
+			&& A.centru == centru && A.sectiuni.size() == sectiuni.size() && A.linii.size() ==
+			linii.size() && A.puncte.size() == puncte.size())
+		{
+			for (int i = 0; i < sectiuni.size(); i++)
+				if (sectiuni[i] != A.sectiuni[i])
+					return true;
+			for (int i = 0; i < linii.size(); i++)
+				if (linii[i] != A.linii[i])
+					return true;
+			for (int i = 0; i < puncte.size(); i++)
+				if (puncte[i] != A.puncte[i])
+					return true;
+			return false;
+		}
+		return true;
+	}
+
 	void AfisareCorp()
 	{
-		for (auto l : linii)
+		Punct TL;
+		Punct3D tl(tx, ty, lz);
+		TL = TL.Punct3Dto2D(tl);
+		TL.ConvertCoord();
+		for (auto& l : linii)
 		{
-			Punct P1, P2, TL;
-			Punct3D tl(tx, ty, lz);
-			TL = TL.Punct3Dto2D(tl);
-			TL.ConvertCoord();
+			Punct P1, P2;
 			P1 = P1.Punct3Dto2D(puncte[l.A]);
 			P2 = P2.Punct3Dto2D(puncte[l.B]);
 			P1.ConvertCoord();
@@ -167,16 +263,27 @@ public:
 			P1.y = zoom * (P1.y - TL.y) + TL.y - offsetY;
 			P2.x = zoom * (P2.x - TL.x) + TL.x - offsetX;
 			P2.y = zoom * (P2.y - TL.y) + TL.y - offsetY;
-			line(P1.x, P1.y, P2.x, P2.y);
+			drawLine(P1.x, P1.y, P2.x, P2.y);
+		}
+		if (selected)
+		{
+			Punct3D lr(lx, ly, tz);
+			Punct LR;
+			LR = LR.Punct3Dto2D(lr);
+			LR.ConvertCoord();
+			TL.x = TL.x - offsetX - 10;
+			TL.y = TL.y - offsetY - 10;
+			LR.x = zoom * (LR.x - TL.x) + TL.x - offsetX + 10;
+			LR.y = zoom * (LR.y - TL.y) + TL.y - offsetY + 10;
+			drawEmptyRectangle(TL.x, TL.y, LR.x, LR.y, COLOR(118, 118, 118), 1, DOTTED_LINE);
 		}
 	}
 
 	void DeterminaCentru()
 	{
-		int i;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
-		for (auto p : puncte)
+		for (auto& p : puncte)
 		{
 			if (p.x < tx) tx = p.x;
 			if (p.x > lx) lx = p.x;
@@ -217,7 +324,6 @@ public:
 	///va roti corpul in sensul acelor de ceasornic pe axa X
 	void RotesteXPoz()
 	{
-		int i;
 		double cz, cy;
 		for (auto &P : puncte)
 		{
@@ -231,7 +337,6 @@ public:
 	///va roti corpul in sens invers acelor de ceasornic pe axa X
 	void RotesteXNeg()
 	{
-		int i;
 		double cz, cy;
 		for (auto &P : puncte)
 		{
@@ -245,7 +350,6 @@ public:
 	///va roti corpul in sensul acelor de ceasornic pe axa Y
 	void RotesteYPoz()
 	{
-		int i;
 		double cz, cx;
 		for (auto &P : puncte)
 		{
@@ -259,7 +363,6 @@ public:
 	///va roti corpul in sens invers acelor de ceasornic pe axa Y
 	void RotesteYNeg()
 	{
-		int i;
 		double cz, cx;
 		for (auto &P : puncte)
 		{
@@ -273,7 +376,6 @@ public:
 	///va roti corpul in sensul acelor de ceasornic pe axa Z
 	void RotesteZPoz()
 	{
-		int i;
 		double cy, cx;
 		for (auto &P : puncte)
 		{
@@ -287,7 +389,6 @@ public:
 	///va roti corpul in sens invers acelor de ceasornic pe axa Z
 	void RotesteZNeg()
 	{
-		int i;
 		double cy, cx;
 		for (auto &P : puncte)
 		{
@@ -303,6 +404,7 @@ class Scena
 {
 public:
 	std::vector<Corp> corpuri;
+	std::vector<Corp> corpuri_selectate;
 
 	Scena()
 	{
@@ -317,7 +419,52 @@ public:
 	void AdaugareCorp()
 	{
 		Corp C;
+		corpuri_selectate.clear();
+		corpuri_selectate.push_back(C);
 		corpuri.push_back(C);
+	}
+
+	void ChangeSelected(int mouse_x, int mouse_y)
+	{
+		bool is_selected = false;
+		Punct3D P;
+		Punct P1, P2;
+		for (auto& C : corpuri)
+		{
+			P.x = C.tx; P.y = C.ty; P.z = C.lz;
+			P1 = P1.Punct3Dto2D(P);
+			P1.ConvertCoord();
+			P.x = C.lx; P.y = C.ly; P.z = C.tz;
+			P2 = P2.Punct3Dto2D(P);
+			P2.ConvertCoord();
+			P1.x = P1.x - offsetX - 10;
+			P1.y = P1.y - offsetY - 10;
+			P2.x = zoom * (P2.x - P1.x) + P1.x - offsetX + 10;
+			P2.y = zoom * (P2.y - P1.y) + P1.y - offsetY + 10;
+			if (mouse_x >= P1.x && mouse_x <= P2.x && mouse_y >= P1.y && mouse_y <= P2.y)
+			{
+				for (int i = 0; is_selected == false && i < corpuri_selectate.size(); i++)
+					if (corpuri_selectate[i] == C)
+					{
+						corpuri_selectate.erase(corpuri_selectate.begin() + i);
+						C.selected = false;
+						is_selected = true;
+					}
+				if (!is_selected)
+				{
+					corpuri_selectate.push_back(C);
+					C.selected = true;
+				}
+				clearviewport();
+				IncarcaScena();
+			}
+		}
+	}
+
+	void IncarcaScena()
+	{
+		for (auto& C : corpuri)
+			C.AfisareCorp();
 	}
 } S;
 #endif // !CORP_H
