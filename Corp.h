@@ -426,7 +426,6 @@ public:
 
 	void ChangeSelected(int mouse_x, int mouse_y)
 	{
-		bool is_selected = false;
 		Punct3D P;
 		Punct P1, P2;
 		for (auto& C : corpuri)
@@ -443,14 +442,16 @@ public:
 			P2.y = zoom * (P2.y - P1.y) + P1.y - offsetY + 10;
 			if (mouse_x >= P1.x && mouse_x <= P2.x && mouse_y >= P1.y && mouse_y <= P2.y)
 			{
-				for (int i = 0; is_selected == false && i < corpuri_selectate.size(); i++)
-					if (corpuri_selectate[i] == C)
-					{
-						corpuri_selectate.erase(corpuri_selectate.begin() + i);
-						C.selected = false;
-						is_selected = true;
-					}
-				if (!is_selected)
+				if (C.selected == true)
+				{
+					for (int i = 0;C.selected == true && i < corpuri_selectate.size(); i++)
+						if (corpuri_selectate[i] == C)
+						{
+							corpuri_selectate.erase(corpuri_selectate.begin() + i);
+							C.selected = false;
+						}
+				}
+				else
 				{
 					corpuri_selectate.push_back(C);
 					C.selected = true;
