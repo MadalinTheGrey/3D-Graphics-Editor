@@ -3,6 +3,7 @@
 
 #include "GlobalVariables.h"
 #include <math.h>
+#include <vector>
 #include <string>
 
 class Punct3D
@@ -26,41 +27,50 @@ public:
 class Punct
 {
 public:
-	double x_real , y_real;
-	int x, y;
+	double x , y;
 
 	Punct()
 	{
-		x = y = x_real = y_real = 0;
+		x = y = 0;
 	}
 
-	Punct(int coord_x, int coord_y)
+	Punct(double coord_x, double coord_y)
 	{
-		x_real = x = coord_x;
-		y_real = y = coord_y;
+		x = coord_x;
+		y = coord_y;
 	}
 
 	/// returneaza proiectia unui punct 3D pe planul ecranului
 	Punct Punct3Dto2D(Punct3D A)
 	{
 		Punct P;
-		P.x_real = A.x * dist_obs / (dist_obs + A.z);
-		P.y_real = A.y * dist_obs / (dist_obs + A.z);
+		P.x = A.x * dist_obs / (dist_obs + A.z);
+		P.y = A.y * dist_obs / (dist_obs + A.z);
+		return P;
+	}
+
+	//converteste un punct 2D in 3D cunoscand pozitia sa in z
+	Punct3D Punct2Dto3D(Punct A, int z_pos)
+	{
+		Punct3D P;
+		P.x = A.x * (dist_obs + z_pos) / dist_obs;
+		P.y = A.y * (dist_obs + z_pos) / dist_obs;
+		P.z = z_pos;
 		return P;
 	}
 	
 	///converteste coordonatele reale in coordonate pe ecran
 	void ConvertCoord()
 	{
-		double p = x_real, dif;
+		double p = x, dif;
 		dif = p - (int)p;
 		if (dif >= 0.5)
-			p++;
+			p = (int)p + 1;
 		x = p;
-		p = y_real;
+		p = y;
 		dif = p - (int)p;
 		if (dif >= 0.5)
-			p++;
+			p = (int)p + 1;
 		y = p;
 	}
 };
@@ -68,7 +78,7 @@ public:
 class Linie
 {
 public:
-	int A, B; //indexurile punctelor in vectorul puncte
+	int A, B; //indexurile punctelor in std::vectorul puncte
 
 	Linie()
 	{
@@ -86,34 +96,28 @@ public:
 class Sectiune
 {
 public:
-	Linie* A; ///vector dinamic care memoreaza liniile
-	int nr_linii; ///numarul de linii care au fost reprezentate
+	std::vector<Linie> A;
 	int z; ///pozitia pe axa z a sectiunii
 
 	Sectiune()
 	{
-		A = new Linie;
-		nr_linii = 0;
 		z = 0;
 	}
 
 	Sectiune(int poz_z)
 	{
-		A = new Linie;
-		nr_linii = 0;
 		z = poz_z;
 	}
 
-	Sectiune(int poz_z, int nr_laturi)
+	Sectiune(int poz_z, std::vector<Linie> B)
 	{
-		A = new Linie[nr_laturi];
-		nr_linii = nr_laturi;
+		A = move(B);
 		z = poz_z;
 	}
 
-	void AddLaturi()
+	void AddLinie(Linie L)
 	{
-
+		A.push_back(L);
 	}
 };
 
@@ -121,15 +125,12 @@ class Corp
 {
 public:
 	std::string name;
-	int nr_puncte, nr_linii, max_puncte, max_linii; // numarul de puncte si numarul de linii ale corpului
-	int sectiune_curenta; // sectiunea in care se deseneaza in momentul de fata
-	int nr_sectiuni, max_sectiuni; // numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
 	Punct3D centru; // centrul corpului
 	double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
 	// intr-un cub caruia ii vom determina centrul
-	Sectiune* sectiuni;
-	Punct3D* puncte;
-	Linie* linii;
+	std::vector<Sectiune> sectiuni;
+	std::vector<Punct3D> puncte;
+	std::vector<Linie> linii;
 
 	Corp()
 	{
@@ -137,51 +138,29 @@ public:
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
-		nr_puncte = 0;
-		max_puncte = 1;
-		nr_linii = 0;
-		max_linii = 1;
-		sectiune_curenta = 0;
-		nr_sectiuni = 0;
-		max_sectiuni = 1;
-		sectiuni = new Sectiune[max_sectiuni];
-		puncte = new Punct3D[max_sectiuni];
-		linii = new Linie[max_linii];
 	}
 
-	Corp(int nr_p, int nr_l, int nr_sect, Punct3D pcte[], Linie lni[], std::string nume)
+	Corp(std::vector<Punct3D> pncte, std::vector<Linie> lnii, std::string nume)
 	{
 		name = nume;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
-		nr_puncte = nr_p;
-		max_puncte = nr_puncte;
-		nr_linii = nr_l;
-		max_linii = nr_linii;
-		sectiune_curenta = 0;
-		nr_sectiuni = nr_sect;
-		max_sectiuni = nr_sectiuni;
-		sectiuni = new Sectiune[max_sectiuni];
-		puncte = new Punct3D[max_puncte];
-		linii = new Linie[max_linii];
-		for (int i = 0; i < nr_puncte; i++)
-			puncte[i] = pcte[i];
-		for (int i = 0; i < nr_linii; i++)
-			linii[i] = lni[i];
+		puncte = move(pncte);
+		linii = move(lnii);
 		DeterminaCentru();
 	}
 
 	void AfisareCorp()
 	{
-		for (int i = 0; i < nr_linii; i++)
+		for (auto l : linii)
 		{
 			Punct P1, P2, TL;
 			Punct3D tl(tx, ty, lz);
 			TL = TL.Punct3Dto2D(tl);
 			TL.ConvertCoord();
-			P1 = P1.Punct3Dto2D(puncte[linii[i].A]);
-			P2 = P2.Punct3Dto2D(puncte[linii[i].B]);
+			P1 = P1.Punct3Dto2D(puncte[l.A]);
+			P2 = P2.Punct3Dto2D(puncte[l.B]);
 			P1.ConvertCoord();
 			P2.ConvertCoord();
 			P1.x = zoom * (P1.x - TL.x) + TL.x - offsetX;
@@ -197,63 +176,24 @@ public:
 		int i;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto p : puncte)
 		{
-			if (puncte[i].x < tx) tx = puncte[i].x;
-			if (puncte[i].x > lx) lx = puncte[i].x;
-			if (puncte[i].y < ty) ty = puncte[i].y;
-			if (puncte[i].y > ly) ly = puncte[i].y;
-			if (puncte[i].z < tz) tz = puncte[i].z;
-			if (puncte[i].z > lz) lz = puncte[i].z;
+			if (p.x < tx) tx = p.x;
+			if (p.x > lx) lx = p.x;
+			if (p.y < ty) ty = p.y;
+			if (p.y > ly) ly = p.y;
+			if (p.z < tz) tz = p.z;
+			if (p.z > lz) lz = p.z;
 		}
 		centru.x = (tx + lx) / 2;
 		centru.y = (ty + ly) / 2;
 		centru.z = (tz + lz) / 2;
 	}
-
-	//dubleaza vectorul de sectiuni
-	void DoubleSectiuni()
-	{
-		Sectiune* p = new Sectiune[max_sectiuni];
-		for (int i = 0; i < nr_sectiuni; i++)
-			p[i] = sectiuni[i];
-		max_sectiuni *= 2;
-		delete sectiuni;
-		sectiuni = new Sectiune[max_sectiuni];
-		for (int i = 0; i < nr_sectiuni; i++)
-			sectiuni[i] = p[i];
-	}
-
-	//dubleaza marimea vectorului de puncte
-	void DoublePuncte()
-	{
-		Punct3D* p = new Punct3D[max_puncte];
-		for (int i = 0; i < nr_puncte; i++)
-			p[i] = puncte[i];
-		max_puncte *= 2;
-		delete puncte;
-		puncte = new Punct3D[max_puncte];
-		for (int i = 0; i < nr_puncte; i++)
-			puncte[i] = p[i];
-	}
-
-	//dubleaza marimea vectorului de linii
-	void DoubleLinii()
-	{
-		Linie* p = new Linie[max_linii];
-		for (int i = 0; i < nr_linii; i++)
-			p[i] = linii[i];
-		max_linii *= 2;
-		delete linii;
-		linii = new Linie[max_linii];
-		for (int i = 0; i < nr_linii; i++)
-			linii[i] = p[i];
-	}
 	
-	//Adauga un punct in vectorul de puncte
-	void AdaugarePunct()
+	//Adauga un punct in std::vectorul de puncte
+	void AdaugarePunct(Punct3D P)
 	{
-
+		puncte.push_back(P);
 	}
 
 	///deseneaza o linie pe ecran pentru user
@@ -279,12 +219,12 @@ public:
 	{
 		int i;
 		double cz, cy;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto &P : puncte)
 		{
-			cy = puncte[i].y - centru.y;
-			cz = puncte[i].z - centru.z;
-			puncte[i].y = cos(default_angle) * cy - sin(default_angle) * cz + centru.y;
-			puncte[i].z = sin(default_angle) * cy + cos(default_angle) * cz + centru.z;
+			cy = P.y - centru.y;
+			cz = P.z - centru.z;
+			P.y = cos(default_angle) * cy - sin(default_angle) * cz + centru.y;
+			P.z = sin(default_angle) * cy + cos(default_angle) * cz + centru.z;
 		}
 	}
 
@@ -293,12 +233,12 @@ public:
 	{
 		int i;
 		double cz, cy;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto &P : puncte)
 		{
-			cy = puncte[i].y - centru.y;
-			cz = puncte[i].z - centru.z;
-			puncte[i].y = cos(-default_angle) * cy - sin(-default_angle) * cz + centru.y;
-			puncte[i].z = sin(-default_angle) * cy + cos(-default_angle) * cz + centru.z;
+			cy = P.y - centru.y;
+			cz = P.z - centru.z;
+			P.y = cos(-default_angle) * cy - sin(-default_angle) * cz + centru.y;
+			P.z = sin(-default_angle) * cy + cos(-default_angle) * cz + centru.z;
 		}
 	}
 
@@ -307,12 +247,12 @@ public:
 	{
 		int i;
 		double cz, cx;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto &P : puncte)
 		{
-			cx = puncte[i].x - centru.x;
-			cz = puncte[i].z - centru.z;
-			puncte[i].x = cos(default_angle) * cx - sin(default_angle) * cz + centru.x;
-			puncte[i].z = sin(default_angle) * cx + cos(default_angle) * cz + centru.z;
+			cx = P.x - centru.x;
+			cz = P.z - centru.z;
+			P.x = cos(default_angle) * cx - sin(default_angle) * cz + centru.x;
+			P.z = sin(default_angle) * cx + cos(default_angle) * cz + centru.z;
 		}
 	}
 
@@ -321,12 +261,12 @@ public:
 	{
 		int i;
 		double cz, cx;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto &P : puncte)
 		{
-			cx = puncte[i].x - centru.x;
-			cz = puncte[i].z - centru.z;
-			puncte[i].x = cos(-default_angle) * cx - sin(-default_angle) * cz + centru.x;
-			puncte[i].z = sin(-default_angle) * cx + cos(-default_angle) * cz + centru.z;
+			cx = P.x - centru.x;
+			cz = P.z - centru.z;
+			P.x = cos(-default_angle) * cx - sin(-default_angle) * cz + centru.x;
+			P.z = sin(-default_angle) * cx + cos(-default_angle) * cz + centru.z;
 		}
 	}
 
@@ -335,12 +275,12 @@ public:
 	{
 		int i;
 		double cy, cx;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto &P : puncte)
 		{
-			cx = puncte[i].x - centru.x;
-			cy = puncte[i].y - centru.y;
-			puncte[i].x = cos(default_angle) * cx - sin(default_angle) * cy + centru.x;
-			puncte[i].y = sin(default_angle) * cx + cos(default_angle) * cy + centru.y;
+			cx = P.x - centru.x;
+			cy = P.y - centru.y;
+			P.x = cos(default_angle) * cx - sin(default_angle) * cy + centru.x;
+			P.y = sin(default_angle) * cx + cos(default_angle) * cy + centru.y;
 		}
 	}
 
@@ -349,12 +289,12 @@ public:
 	{
 		int i;
 		double cy, cx;
-		for (i = 0; i < nr_puncte; i++)
+		for (auto &P : puncte)
 		{
-			cx = puncte[i].x - centru.x;
-			cy = puncte[i].y - centru.y;
-			puncte[i].x = cos(-default_angle) * cx - sin(-default_angle) * cy + centru.x;
-			puncte[i].y = sin(-default_angle) * cx + cos(-default_angle) * cy + centru.y;
+			cx = P.x - centru.x;
+			cy = P.y - centru.y;
+			P.x = cos(-default_angle) * cx - sin(-default_angle) * cy + centru.x;
+			P.y = sin(-default_angle) * cx + cos(-default_angle) * cy + centru.y;
 		}
 	}
 };
@@ -362,46 +302,22 @@ public:
 class Scena
 {
 public:
-	int nr_corpuri;
-	int max_corpuri;
-	Corp* corpuri;
+	std::vector<Corp> corpuri;
 
 	Scena()
 	{
-		nr_corpuri = 0;
-		max_corpuri = 1;
-		corpuri = new Corp[max_corpuri];
+		
 	}
 
-	Scena(int nr_corp, Corp C[])
+	Scena(std::vector<Corp> corp)
 	{
-		nr_corpuri = nr_corp;
-		max_corpuri = nr_corpuri;
-		corpuri = new Corp[max_corpuri];
-		for (int i = 0; i < nr_corpuri; i++)
-			corpuri[i] = C[i];
+		corpuri = move(corp);
 	}
 
 	void AdaugareCorp()
 	{
-		S.nr_corpuri++;
-		if (S.nr_corpuri >= S.max_corpuri)
-			S.DoubleCorpuri();
 		Corp C;
-		S.corpuri[S.nr_corpuri - 1] = C;
-	}
-
-	//dubleaza marimea vectorului de corpuri
-	void DoubleCorpuri()
-	{
-		Corp* p = new Corp[max_corpuri];
-		for (int i = 0; i < nr_corpuri; i++)
-			p[i] = corpuri[i];
-		max_corpuri *= 2;
-		delete corpuri;
-		corpuri = new Corp[max_corpuri];
-		for (int i = 0; i < nr_corpuri; i++)
-			corpuri[i] = p[i];
+		corpuri.push_back(C);
 	}
 } S;
 #endif // !CORP_H
