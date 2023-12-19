@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <string>
 #include "myGraphics.h"
-#include "corp"
+#include "Corp.h"
 
 class Button {
 public:
@@ -23,7 +23,6 @@ public:
     std::function<void()> drawButton;
     std::function<void()> onClick;
 };
-//TODO transforma din vector STL in vector dinamic si muta in GB?
 std::vector<Button> buttons;
 
 static void InitializeButtons() {
@@ -62,11 +61,8 @@ static void InitializeButtons() {
         };
     new_3D_form.onClick = []()
         {
-            S.nr_corpuri++;
-            if (S.nr_corpuri >= S.max_corpuri)
-                S.DoubleCorpuri();
-            Corp C;
-            S.corpuri[S.nr_corpuri - 1] = C;
+            printf("New form added!\n");
+            S.AdaugareCorp();
         };
     new_3D_form.drawButton();
     buttons.push_back(new_3D_form);
@@ -75,6 +71,7 @@ static void InitializeButtons() {
     Button draw_line = *new Button("Draw Line", 0, 100, 40, 140);
     draw_line.drawButton = []()
         {
+            drawLine(0, 100, 40, 100, COLOR(118, 118, 118), 1);
             drawLine(0, 140, 40, 140, COLOR(118, 118, 118), 1);
             drawLine(30, 110, 10, 130);
         };
@@ -83,7 +80,7 @@ static void InitializeButtons() {
             last_clicked_button = 3;
         };
     draw_line.drawButton();
-    buttons.push_back(new_3D_form);
+    buttons.push_back(draw_line);
 }
 
 void checkMouseClick(int x, int y) {
@@ -96,8 +93,14 @@ void checkMouseClick(int x, int y) {
         }
     if (!is_button)
     {
-        if (buttons[last_clicked_button].name == "Draw Line")
-            ; 
+        if (buttons[last_clicked_button].name == "Draw Line" && S.corpuri_selectate.size() == 1)
+        {
+            S.corpuri_selectate[0].UserDrawLine();
+        }
+        else
+        {
+            S.ChangeSelected(x, y);
+        }
     }
 
 }
