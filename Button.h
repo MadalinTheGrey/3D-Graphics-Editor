@@ -93,9 +93,14 @@ void checkMouseClick(int x, int y) {
         }
     if (!is_button)
     {
-        if (buttons[last_clicked_button].name == "Draw Line" && S.corpuri_selectate.size() == 1)
+        if (buttons[last_clicked_button].name == "Draw Line" && S.nr_corp_selectate == 1)
         {
-            S.corpuri_selectate[0].UserDrawLine();
+            for (auto& C : S.corpuri)
+                if (C.selected)
+                {
+                    C.UserDrawLine();
+                    break;
+                }
         }
         else
         {
