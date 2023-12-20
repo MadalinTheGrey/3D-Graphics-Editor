@@ -11,6 +11,8 @@ class Punct3D
 public:
 	double x, y, z;
 
+	//------------------------------------------------Constructori-------------------------------------------
+
 	Punct3D()
 	{
 		x = y = z = 0;
@@ -22,6 +24,8 @@ public:
 		y = coord_y;
 		z = coord_z;
 	}
+
+	//--------------------------------------------------Operatori---------------------------------------------
 
 	bool operator==(Punct3D P)
 	{
@@ -43,6 +47,8 @@ class Punct
 public:
 	double x , y;
 
+	//---------------------------------------Constructori-----------------------------------------
+
 	Punct()
 	{
 		x = y = 0;
@@ -53,6 +59,24 @@ public:
 		x = coord_x;
 		y = coord_y;
 	}
+
+	//-----------------------------------------Operatori-------------------------------------------
+
+	bool operator==(Punct P)
+	{
+		if (P.x == x && P.y == y)
+			return true;
+		return false;
+	}
+
+	bool operator!=(Punct P)
+	{
+		if (P.x != x || P.y != y)
+			return true;
+		return false;
+	}
+
+	//-------------------------------------------Metode-------------------------------------------
 
 	/// returneaza proiectia unui punct 3D pe planul ecranului
 	Punct Punct3Dto2D(Punct3D A)
@@ -94,6 +118,8 @@ class Linie
 public:
 	int A, B; //indexurile punctelor in std::vectorul puncte
 
+	//-----------------------------------------------Constructori------------------------------------------
+
 	Linie()
 	{
 		A = 0;
@@ -105,6 +131,8 @@ public:
 		A = P1;
 		B = P2;
 	}
+
+	//------------------------------------------------Operatori-------------------------------------------
 
 	bool operator==(const Linie& L)
 	{
@@ -127,6 +155,8 @@ public:
 	std::vector<Linie> linii_sect;
 	int z; ///pozitia pe axa z a sectiunii
 
+	//---------------------------------Constructori-------------------------------------------
+
 	Sectiune()
 	{
 		z = 0;
@@ -142,6 +172,8 @@ public:
 		linii_sect = move(B);
 		z = poz_z;
 	}
+
+	//--------------------------------Operatori--------------------------------------------
 
 	bool operator==(Sectiune sect)
 	{
@@ -167,6 +199,8 @@ public:
 		return true;
 	}
 
+	//-----------------------------------Metode-----------------------------------
+
 	void AddLinie(Linie L)
 	{
 		linii_sect.push_back(L);
@@ -176,14 +210,18 @@ public:
 class Corp
 {
 public:
+	//---------------------------------Variabile-------------------------------------------------
 	std::string name;
 	bool selected;
-	Punct3D centru, tl_corner, lr_corner; // centrul corpului si colturile
+	Punct3D centru; // centrul corpului
+	Punct tl_corner, lr_corner; // colturile stanga sus si dreapta jos corpului
 	double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
 	// intr-un cub caruia ii vom determina centrul
 	std::vector<Sectiune> sectiuni;
 	std::vector<Punct3D> puncte;
 	std::vector<Linie> linii;
+
+	//--------------------------------Constructori------------------------------------------
 
 	Corp()
 	{
@@ -203,9 +241,10 @@ public:
 		centru = { 0, 0, 0 };
 		puncte = move(pncte);
 		linii = move(lnii);
-		DeterminaCentru();
+		DeterminaCentru_Colturi();
 	}
 
+	//---------------------------------------Operatori------------------------------------------
 	bool operator==(Corp A)
 	{
 		if (A.name == name && A.lx == lx && A.ly == ly && A.lz == lz && A.tx == tx && A.ty == ty && A.tz == tz
@@ -246,11 +285,13 @@ public:
 		return true;
 	}
 
+	//-----------------------------------------------Metode------------------------------------------------
+
+	///Afiseaza corpul pe ecran
 	void AfisareCorp()
 	{
-		Punct TL;
 		Punct3D tl(tx, ty, lz);
-		TL = TL.Punct3Dto2D(tl);
+		Punct TL = TL.Punct3Dto2D(tl);
 		TL.ConvertCoord();
 		for (auto& l : linii)
 		{
@@ -266,20 +307,11 @@ public:
 			drawLine(P1.x, P1.y, P2.x, P2.y);
 		}
 		if (selected)
-		{
-			Punct3D lr(lx, ly, tz);
-			Punct LR;
-			LR = LR.Punct3Dto2D(lr);
-			LR.ConvertCoord();
-			TL.x = TL.x - offsetX - 10;
-			TL.y = TL.y - offsetY - 10;
-			LR.x = zoom * (LR.x - TL.x) + TL.x - offsetX + 10;
-			LR.y = zoom * (LR.y - TL.y) + TL.y - offsetY + 10;
-			drawEmptyRectangle(TL.x, TL.y, LR.x, LR.y, COLOR(118, 118, 118), 1, DOTTED_LINE);
-		}
+			drawEmptyRectangle(tl_corner.x - offsetX - 10, tl_corner.y - offsetY - 10, zoom * (lr_corner.x - tl_corner.x) + tl_corner.x - offsetX + 10, zoom * (lr_corner.y - tl_corner.y) + tl_corner.y - offsetY + 10, COLOR(118, 118, 118), 1, DOTTED_LINE);
 	}
 
-	void DeterminaCentru()
+	///Determina centrul si colturile corpului
+	void DeterminaCentru_Colturi()
 	{
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
@@ -295,6 +327,12 @@ public:
 		centru.x = (tx + lx) / 2;
 		centru.y = (ty + ly) / 2;
 		centru.z = (tz + lz) / 2;
+		Punct3D P(tx, ty, lz);
+		tl_corner = tl_corner.Punct3Dto2D(P);
+		tl_corner.ConvertCoord();
+		P.x = lx; P.y = ly; P.z = tz;
+		lr_corner = lr_corner.Punct3Dto2D(P);
+		lr_corner.ConvertCoord();
 	}
 	
 	//Adauga un punct in std::vectorul de puncte
@@ -404,57 +442,48 @@ class Scena
 {
 public:
 	std::vector<Corp> corpuri;
-	std::vector<Corp> corpuri_selectate;
+	int nr_corp_selectate; //numarul de corpuri selectate la oricare moment
+
+	//------------------------------------Constructori--------------------------------
 
 	Scena()
 	{
-		
+		nr_corp_selectate = 0;
 	}
 
 	Scena(std::vector<Corp> corp)
 	{
+		nr_corp_selectate = 0;
 		corpuri = move(corp);
 	}
+
+	//-------------------------------------Metode---------------------------------------
 
 	void AdaugareCorp()
 	{
 		Corp C;
-		corpuri_selectate.clear();
-		corpuri_selectate.push_back(C);
+		C.selected = true;
+		nr_corp_selectate++;
 		corpuri.push_back(C);
 	}
 
 	void ChangeSelected(int mouse_x, int mouse_y)
 	{
-		Punct3D P;
-		Punct P1, P2;
 		for (auto& C : corpuri)
 		{
-			P.x = C.tx; P.y = C.ty; P.z = C.lz;
-			P1 = P1.Punct3Dto2D(P);
-			P1.ConvertCoord();
-			P.x = C.lx; P.y = C.ly; P.z = C.tz;
-			P2 = P2.Punct3Dto2D(P);
-			P2.ConvertCoord();
-			P1.x = P1.x - offsetX - 10;
-			P1.y = P1.y - offsetY - 10;
-			P2.x = zoom * (P2.x - P1.x) + P1.x - offsetX + 10;
-			P2.y = zoom * (P2.y - P1.y) + P1.y - offsetY + 10;
-			if (mouse_x >= P1.x && mouse_x <= P2.x && mouse_y >= P1.y && mouse_y <= P2.y)
+			///de modificat astea cu zoom offset etc. + why tf nu merge rotatia
+			Punct TL(C.tl_corner.x - offsetX - 10, C.tl_corner.y - offsetY - 10), LR(zoom * (C.lr_corner.x - C.tl_corner.x) + C.tl_corner.x - offsetX + 10, zoom * (C.lr_corner.y - C.tl_corner.y) + C.tl_corner.y - offsetY + 10);
+			if (mouse_x >= TL.x && mouse_x <= LR.x && mouse_y >= TL.y && mouse_y <= LR.y)
 			{
 				if (C.selected == true)
 				{
-					for (int i = 0;C.selected == true && i < corpuri_selectate.size(); i++)
-						if (corpuri_selectate[i] == C)
-						{
-							corpuri_selectate.erase(corpuri_selectate.begin() + i);
-							C.selected = false;
-						}
+					C.selected = false;
+					nr_corp_selectate--;
 				}
 				else
 				{
-					corpuri_selectate.push_back(C);
 					C.selected = true;
+					nr_corp_selectate++;
 				}
 				clearviewport();
 				IncarcaScena();
@@ -465,7 +494,10 @@ public:
 	void IncarcaScena()
 	{
 		for (auto& C : corpuri)
+		{
+			C.DeterminaCentru_Colturi();
 			C.AfisareCorp();
+		}
 	}
 } S;
 #endif // !CORP_H
