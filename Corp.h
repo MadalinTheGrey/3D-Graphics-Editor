@@ -1,16 +1,17 @@
-#ifndef INC_3D_EDITOR_V2_CORP_H
-#define INC_3D_EDITOR_V2_CORP_H
-#include "GlobalVariables.h"
-#include "myGraphics.h"
-#include <math.h>
-#include <iostream>
+#ifndef CORP_H
+#define CORP_H
 
-#pragma once
+#include "GlobalVariables.h"
+#include <cmath>
+#include <vector>
+#include <string>
 
 class Punct3D
 {
 public:
     double x, y, z;
+
+    //------------------------------------------------Constructori-------------------------------------------
 
     Punct3D()
     {
@@ -23,46 +24,91 @@ public:
         y = coord_y;
         z = coord_z;
     }
+
+    //--------------------------------------------------Operatori---------------------------------------------
+
+    bool operator==(Punct3D P)
+    {
+        if (P.x == x && P.y == y && P.z == z)
+            return true;
+        return false;
+    }
+
+    bool operator!=(Punct3D P)
+    {
+        if (P.x != x || P.y != y || P.z != z)
+            return true;
+        return false;
+    }
 };
 
 class Punct
 {
 public:
-    double x_real , y_real;
-    int x, y;
+    double x, y;
+
+    //---------------------------------------Constructori-----------------------------------------
 
     Punct()
     {
-        x = y = x_real = y_real = 0;
+        x = y = 0;
     }
 
-    Punct(int coord_x, int coord_y)
+    Punct(double coord_x, double coord_y)
     {
-        x_real = x = coord_x;
-        y_real = y = coord_y;
+        x = coord_x;
+        y = coord_y;
     }
+
+    //-----------------------------------------Operatori-------------------------------------------
+
+    bool operator==(Punct P)
+    {
+        if (P.x == x && P.y == y)
+            return true;
+        return false;
+    }
+
+    bool operator!=(Punct P)
+    {
+        if (P.x != x || P.y != y)
+            return true;
+        return false;
+    }
+
+    //-------------------------------------------Metode-------------------------------------------
 
     /// returneaza proiectia unui punct 3D pe planul ecranului
     Punct Punct3Dto2D(Punct3D A)
     {
         Punct P;
-        P.x_real = A.x * dist_obs / (dist_obs + A.z);
-        P.y_real = A.y * dist_obs / (dist_obs + A.z);
+        P.x = A.x * dist_obs / (dist_obs + A.z);
+        P.y = A.y * dist_obs / (dist_obs + A.z);
+        return P;
+    }
+
+    //converteste un punct 2D in 3D cunoscand pozitia sa in z
+    Punct3D Punct2Dto3D(Punct A, int z_pos)
+    {
+        Punct3D P;
+        P.x = A.x * (dist_obs + z_pos) / dist_obs;
+        P.y = A.y * (dist_obs + z_pos) / dist_obs;
+        P.z = z_pos;
         return P;
     }
 
     ///converteste coordonatele reale in coordonate pe ecran
     void ConvertCoord()
     {
-        double p = x_real, dif;
+        double p = x, dif;
         dif = p - (int)p;
         if (dif >= 0.5)
-            p++;
+            p = (int)p + 1;
         x = p;
-        p = y_real;
+        p = y;
         dif = p - (int)p;
         if (dif >= 0.5)
-            p++;
+            p = (int)p + 1;
         y = p;
     }
 };
@@ -70,7 +116,9 @@ public:
 class Linie
 {
 public:
-    int A, B; //indexurile punctelor in vectorul puncte
+    int A, B; //indexurile punctelor in std::vectorul puncte
+
+    //-----------------------------------------------Constructori------------------------------------------
 
     Linie()
     {
@@ -83,131 +131,214 @@ public:
         A = P1;
         B = P2;
     }
+
+    //------------------------------------------------Operatori-------------------------------------------
+
+    bool operator==(const Linie& L)
+    {
+        if (L.A == A && L.B == B)
+            return true;
+        return false;
+    }
+
+    bool operator!=(const Linie& L)
+    {
+        if (L.A != A || L.B != B)
+            return true;
+        return false;
+    }
 };
 
 class Sectiune
 {
 public:
-    Linie* A; ///vector dinamic care memoreaza liniile
-    int nr_linii; ///numarul de linii care au fost reprezentate
+    std::vector<Linie> linii_sect;
     int z; ///pozitia pe axa z a sectiunii
+
+    //---------------------------------Constructori-------------------------------------------
 
     Sectiune()
     {
-        A = new Linie;
-        nr_linii = 0;
         z = 0;
     }
 
     Sectiune(int poz_z)
     {
-        A = new Linie;
-        nr_linii = 0;
         z = poz_z;
     }
 
-    Sectiune(int poz_z, int nr_laturi)
+    Sectiune(int poz_z, std::vector<Linie> B)
     {
-        A = new Linie[nr_laturi];
-        nr_linii = nr_laturi;
+        linii_sect = move(B);
         z = poz_z;
     }
 
-    void AddLaturi()
-    {
+    //--------------------------------Operatori--------------------------------------------
 
+    bool operator==(Sectiune sect)
+    {
+        if (sect.z == z && linii_sect.size() == sect.linii_sect.size())
+        {
+            for (int i = 0; i < linii_sect.size(); i++)
+                if (linii_sect[i] != sect.linii_sect[i])
+                    return false;
+            return true;
+        }
+        return false;
+    }
+
+    bool operator!=(Sectiune sect)
+    {
+        if (sect.z == z && linii_sect.size() == sect.linii_sect.size())
+        {
+            for (int i = 0; i < linii_sect.size(); i++)
+                if (linii_sect[i] != sect.linii_sect[i])
+                    return true;
+            return false;
+        }
+        return true;
+    }
+
+    //-----------------------------------Metode-----------------------------------
+
+    void AddLinie(Linie L)
+    {
+        linii_sect.push_back(L);
     }
 };
 
 class Corp
 {
 public:
-    int nr_puncte, nr_linii; // numarul de puncte si numarul de linii ale corpului
-    int sectiune_curenta; // sectiunea in care se deseneaza in momentul de fata
-    int nr_sectiuni; // numarul de sectiuni ale corpului, fiecare corp va avea minim o sectiune asa ca incepem de la 1
+    //---------------------------------Variabile-------------------------------------------------
+    std::string name;
+    bool selected;
     Punct3D centru; // centrul corpului
+    Punct tl_corner, lr_corner; // colturile stanga sus si dreapta jos corpului
     double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
     // intr-un cub caruia ii vom determina centrul
-    Sectiune* sectiuni;
-    Punct3D* puncte;
-    Linie* linii;
+    std::vector<Sectiune> sectiuni;
+    std::vector<Punct3D> puncte;
+    std::vector<Linie> linii;
+
+    //--------------------------------Constructori------------------------------------------
 
     Corp()
     {
+        name = "";
+        selected = false;
         tx = ty = tz = 1280;
         lx = ly = lz = 0;
         centru = { 0, 0, 0 };
-        nr_puncte = 1;
-        nr_linii = 1;
-        sectiune_curenta = 0;
-        nr_sectiuni = 1;
-        sectiuni = new Sectiune[nr_sectiuni];
-        puncte = new Punct3D[nr_puncte];
-        linii = new Linie[nr_linii];
     }
 
-    Corp(int nr_p, int nr_l, int nr_sect, Punct3D pcte[], Linie lni[])
+    Corp(std::vector<Punct3D> pncte, std::vector<Linie> lnii, std::string nume)
     {
+        name = nume;
+        selected = false;
         tx = ty = tz = 1280;
         lx = ly = lz = 0;
         centru = { 0, 0, 0 };
-        nr_puncte = nr_p;
-        nr_linii = nr_l;
-        sectiune_curenta = 0;
-        nr_sectiuni = nr_sect;
-        sectiuni = new Sectiune[nr_sectiuni];
-        puncte = new Punct3D[nr_puncte];
-        linii = new Linie[nr_linii];
-        for (int i = 0; i < nr_puncte; i++)
-            puncte[i] = pcte[i];
-        for (int i = 0; i < nr_linii; i++)
-            linii[i] = lni[i];
-        DeterminaCentru();
+        puncte = move(pncte);
+        linii = move(lnii);
+        DeterminaCentru_Colturi();
     }
 
+    //---------------------------------------Operatori------------------------------------------
+    bool operator==(Corp A)
+    {
+        if (A.name == name && A.lx == lx && A.ly == ly && A.lz == lz && A.tx == tx && A.ty == ty && A.tz == tz
+            && A.centru == centru && A.sectiuni.size() == sectiuni.size() && A.linii.size() ==
+            linii.size() && A.puncte.size() == puncte.size())
+        {
+            for (int i = 0; i < sectiuni.size(); i++)
+                if (sectiuni[i] != A.sectiuni[i])
+                    return false;
+            for (int i = 0; i < linii.size(); i++)
+                if (linii[i] != A.linii[i])
+                    return false;
+            for (int i = 0; i < puncte.size(); i++)
+                if (puncte[i] != A.puncte[i])
+                    return false;
+            return true;
+        }
+        return false;
+    }
+
+    bool operator!=(Corp A)
+    {
+        if (A.name == name && A.lx == lx && A.ly == ly && A.lz == lz && A.tx == tx && A.ty == ty && A.tz == tz
+            && A.centru == centru && A.sectiuni.size() == sectiuni.size() && A.linii.size() ==
+            linii.size() && A.puncte.size() == puncte.size())
+        {
+            for (int i = 0; i < sectiuni.size(); i++)
+                if (sectiuni[i] != A.sectiuni[i])
+                    return true;
+            for (int i = 0; i < linii.size(); i++)
+                if (linii[i] != A.linii[i])
+                    return true;
+            for (int i = 0; i < puncte.size(); i++)
+                if (puncte[i] != A.puncte[i])
+                    return true;
+            return false;
+        }
+        return true;
+    }
+
+    //-----------------------------------------------Metode------------------------------------------------
+
+    ///Afiseaza corpul pe ecran
     void AfisareCorp()
     {
-        //for(int i=0; i<nr_puncte; ++i)
-            //std::cout << puncte[i].x << " " << puncte[i].y << " " << puncte[i].z << "\n";
-        for (int i = 0; i < nr_linii; i++)
+        Punct3D tl(tx, ty, lz);
+        Punct TL = TL.Punct3Dto2D(tl);
+        TL.ConvertCoord();
+        for (auto& l : linii)
         {
-            Punct P1, P2, TL;
-            Punct3D tl(tx, ty, lz);
-            TL = TL.Punct3Dto2D(tl);
-            TL.ConvertCoord();
-            P1 = P1.Punct3Dto2D(puncte[linii[i].A]);
-            P2 = P2.Punct3Dto2D(puncte[linii[i].B]);
+            Punct P1, P2;
+            P1 = P1.Punct3Dto2D(puncte[l.A]);
+            P2 = P2.Punct3Dto2D(puncte[l.B]);
             P1.ConvertCoord();
             P2.ConvertCoord();
-            P1.x = zoom * (P1.x - TL.x) + TL.x;
-            P1.y = zoom * (P1.y - TL.y) + TL.y;
-            P2.x = zoom * (P2.x - TL.x) + TL.x;
-            P2.y = zoom * (P2.y - TL.y) + TL.y;
+            P1.x = zoom * (P1.x - TL.x) + TL.x - offsetX;
+            P1.y = zoom * (P1.y - TL.y) + TL.y - offsetY;
+            P2.x = zoom * (P2.x - TL.x) + TL.x - offsetX;
+            P2.y = zoom * (P2.y - TL.y) + TL.y - offsetY;
             drawLine(P1.x, P1.y, P2.x, P2.y);
         }
+        if (selected)
+            drawEmptyRectangle(tl_corner.x - offsetX - 10, tl_corner.y - offsetY - 10, zoom * (lr_corner.x - tl_corner.x) + tl_corner.x - offsetX + 10, zoom * (lr_corner.y - tl_corner.y) + tl_corner.y - offsetY + 10, COLOR(118, 118, 118), 1, DOTTED_LINE);
     }
 
-    void DeterminaCentru()
+    ///Determina centrul si colturile corpului
+    void DeterminaCentru_Colturi()
     {
-        int i;
-        for (i = 0; i < nr_puncte; i++)
+        tx = ty = tz = 1280;
+        lx = ly = lz = 0;
+        for (auto& p : puncte)
         {
-            if (puncte[i].x < tx) tx = puncte[i].x;
-            if (puncte[i].x > lx) lx = puncte[i].x;
-            if (puncte[i].y < ty) ty = puncte[i].y;
-            if (puncte[i].y > ly) ly = puncte[i].y;
-            if (puncte[i].z < tz) tz = puncte[i].z;
-            if (puncte[i].z > lz) lz = puncte[i].z;
+            if (p.x < tx) tx = p.x;
+            if (p.x > lx) lx = p.x;
+            if (p.y < ty) ty = p.y;
+            if (p.y > ly) ly = p.y;
+            if (p.z < tz) tz = p.z;
+            if (p.z > lz) lz = p.z;
         }
         centru.x = (tx + lx) / 2;
         centru.y = (ty + ly) / 2;
         centru.z = (tz + lz) / 2;
+        Punct3D P(tx, ty, lz);
+        tl_corner = tl_corner.Punct3Dto2D(P);
+        tl_corner.ConvertCoord();
+        P.x = lx; P.y = ly; P.z = tz;
+        lr_corner = lr_corner.Punct3Dto2D(P);
+        lr_corner.ConvertCoord();
     }
 
-    ///dubleaza marimea vectorului ce pastreaza sectiunile
-    void GrowSectiuni()
+    //Adauga un punct in std::vectorul de puncte
+    void AdaugarePunct(Punct3D P)
     {
-
+        puncte.push_back(P);
     }
 
     ///deseneaza o linie pe ecran pentru user
@@ -231,85 +362,142 @@ public:
     ///va roti corpul in sensul acelor de ceasornic pe axa X
     void RotesteXPoz()
     {
-        int i;
         double cz, cy;
-        for (i = 0; i < nr_puncte; i++)
+        for (auto& P : puncte)
         {
-            cy = puncte[i].y - centru.y;
-            cz = puncte[i].z - centru.z;
-            puncte[i].y = cos(default_angle) * cy - sin(default_angle) * cz + centru.y;
-            puncte[i].z = sin(default_angle) * cy + cos(default_angle) * cz + centru.z;
+            cy = P.y - centru.y;
+            cz = P.z - centru.z;
+            P.y = cos(default_angle) * cy - sin(default_angle) * cz + centru.y;
+            P.z = sin(default_angle) * cy + cos(default_angle) * cz + centru.z;
         }
     }
 
     ///va roti corpul in sens invers acelor de ceasornic pe axa X
     void RotesteXNeg()
     {
-        int i;
         double cz, cy;
-        for (i = 0; i < nr_puncte; i++)
+        for (auto& P : puncte)
         {
-            cy = puncte[i].y - centru.y;
-            cz = puncte[i].z - centru.z;
-            puncte[i].y = cos(-default_angle) * cy - sin(-default_angle) * cz + centru.y;
-            puncte[i].z = sin(-default_angle) * cy + cos(-default_angle) * cz + centru.z;
+            cy = P.y - centru.y;
+            cz = P.z - centru.z;
+            P.y = cos(-default_angle) * cy - sin(-default_angle) * cz + centru.y;
+            P.z = sin(-default_angle) * cy + cos(-default_angle) * cz + centru.z;
         }
     }
 
     ///va roti corpul in sensul acelor de ceasornic pe axa Y
     void RotesteYPoz()
     {
-        int i;
         double cz, cx;
-        for (i = 0; i < nr_puncte; i++)
+        for (auto& P : puncte)
         {
-            cx = puncte[i].x - centru.x;
-            cz = puncte[i].z - centru.z;
-            puncte[i].x = cos(default_angle) * cx - sin(default_angle) * cz + centru.x;
-            puncte[i].z = sin(default_angle) * cx + cos(default_angle) * cz + centru.z;
+            cx = P.x - centru.x;
+            cz = P.z - centru.z;
+            P.x = cos(default_angle) * cx - sin(default_angle) * cz + centru.x;
+            P.z = sin(default_angle) * cx + cos(default_angle) * cz + centru.z;
         }
     }
 
     ///va roti corpul in sens invers acelor de ceasornic pe axa Y
     void RotesteYNeg()
     {
-        int i;
         double cz, cx;
-        for (i = 0; i < nr_puncte; i++)
+        for (auto& P : puncte)
         {
-            cx = puncte[i].x - centru.x;
-            cz = puncte[i].z - centru.z;
-            puncte[i].x = cos(-default_angle) * cx - sin(-default_angle) * cz + centru.x;
-            puncte[i].z = sin(-default_angle) * cx + cos(-default_angle) * cz + centru.z;
+            cx = P.x - centru.x;
+            cz = P.z - centru.z;
+            P.x = cos(-default_angle) * cx - sin(-default_angle) * cz + centru.x;
+            P.z = sin(-default_angle) * cx + cos(-default_angle) * cz + centru.z;
         }
     }
 
     ///va roti corpul in sensul acelor de ceasornic pe axa Z
     void RotesteZPoz()
     {
-        int i;
         double cy, cx;
-        for (i = 0; i < nr_puncte; i++)
+        for (auto& P : puncte)
         {
-            cx = puncte[i].x - centru.x;
-            cy = puncte[i].y - centru.y;
-            puncte[i].x = cos(default_angle) * cx - sin(default_angle) * cy + centru.x;
-            puncte[i].y = sin(default_angle) * cx + cos(default_angle) * cy + centru.y;
+            cx = P.x - centru.x;
+            cy = P.y - centru.y;
+            P.x = cos(default_angle) * cx - sin(default_angle) * cy + centru.x;
+            P.y = sin(default_angle) * cx + cos(default_angle) * cy + centru.y;
         }
     }
 
     ///va roti corpul in sens invers acelor de ceasornic pe axa Z
     void RotesteZNeg()
     {
-        int i;
         double cy, cx;
-        for (i = 0; i < nr_puncte; i++)
+        for (auto& P : puncte)
         {
-            cx = puncte[i].x - centru.x;
-            cy = puncte[i].y - centru.y;
-            puncte[i].x = cos(-default_angle) * cx - sin(-default_angle) * cy + centru.x;
-            puncte[i].y = sin(-default_angle) * cx + cos(-default_angle) * cy + centru.y;
+            cx = P.x - centru.x;
+            cy = P.y - centru.y;
+            P.x = cos(-default_angle) * cx - sin(-default_angle) * cy + centru.x;
+            P.y = sin(-default_angle) * cx + cos(-default_angle) * cy + centru.y;
         }
     }
 };
-#endif //INC_3D_EDITOR_V2_CORP_H
+
+class Scena
+{
+public:
+    std::vector<Corp> corpuri;
+    int nr_corp_selectate; //numarul de corpuri selectate la oricare moment
+
+    //------------------------------------Constructori--------------------------------
+
+    Scena()
+    {
+        nr_corp_selectate = 0;
+    }
+
+    Scena(std::vector<Corp> corp)
+    {
+        nr_corp_selectate = 0;
+        corpuri = move(corp);
+    }
+
+    //-------------------------------------Metode---------------------------------------
+
+    void AdaugareCorp()
+    {
+        Corp C;
+        C.selected = true;
+        nr_corp_selectate++;
+        corpuri.push_back(C);
+    }
+
+    void ChangeSelected(int mouse_x, int mouse_y)
+    {
+        for (auto& C : corpuri)
+        {
+            ///de modificat astea cu zoom offset etc. + why tf nu merge rotatia
+            Punct TL(C.tl_corner.x - offsetX - 10, C.tl_corner.y - offsetY - 10), LR(zoom * (C.lr_corner.x - C.tl_corner.x) + C.tl_corner.x - offsetX + 10, zoom * (C.lr_corner.y - C.tl_corner.y) + C.tl_corner.y - offsetY + 10);
+            if (mouse_x >= TL.x && mouse_x <= LR.x && mouse_y >= TL.y && mouse_y <= LR.y)
+            {
+                if (C.selected == true)
+                {
+                    C.selected = false;
+                    nr_corp_selectate--;
+                }
+                else
+                {
+                    C.selected = true;
+                    nr_corp_selectate++;
+                }
+                clearviewport();
+                IncarcaScena();
+            }
+        }
+    }
+
+    void IncarcaScena()
+    {
+        for (auto& C : corpuri)
+        {
+            C.DeterminaCentru_Colturi();
+            C.AfisareCorp();
+        }
+    }
+} S;
+#endif // !CORP_H

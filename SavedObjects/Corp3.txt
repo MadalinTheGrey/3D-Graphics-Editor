@@ -1,0 +1,10 @@
+Corp: Patrat
+Punct: 100 100 0
+Punct: 100 200 0
+Punct: 200 200 0
+Punct: 200 100 0
+Linie: 0 1
+Linie: 1 2
+Linie: 2 3 
+Linie: 3 0
+EndCorp

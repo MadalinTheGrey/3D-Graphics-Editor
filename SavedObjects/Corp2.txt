@@ -1,0 +1,5 @@
+Corp: LINIE
+Punct: 100 100 0
+Punct: 200 200 0
+Linie: 0 1
+EndCorp
