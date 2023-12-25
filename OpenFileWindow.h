@@ -55,7 +55,7 @@ string receivePathToFile() {
 			}
 		}
     }
-    closegraph(CURRENT_WINDOW);
+    //closegraph(CURRENT_WINDOW);
     return  "null";
 }
 
