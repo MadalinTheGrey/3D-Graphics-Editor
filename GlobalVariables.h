@@ -1,16 +1,21 @@
+#ifndef INC_3D_EDITOR_V2_GLOBALVARIABLES_H
+#define INC_3D_EDITOR_V2_GLOBALVARIABLES_H
 
-#include <graphics.h>
-#include <string>
-using namespace std;
-#pragma once
-static class GlobalVariables{
-public:
-    unsigned int window_width = 1280;
-    unsigned int window_height = 720;
-    char window_name[10] = "Editor 3D";
-    int window_bg_color = BLACK;
-    int window_startPosX = 100;
-    int window_startPosY = 50;
-    int MAPPED_COLORS[1280][720] = {0};
-    int MAPPED_BUTTONS[1280][720] =  {0};
-}GB;
+#define BLACK 0x000000
+
+static int windowWidth = 1280;
+static int windowHeight = 720;
+static char windowName[100] = "3D Editor";
+static int windowBgColor = BLACK;
+static int windowPosX = 100;
+static int windowPosY = 50;
+static int dist_obs = 600;
+static double zoom = 1;
+static double default_angle = 0.01;
+static double offsetX = 0, offsetY = 0; //modifica pozitia corpurilor in scena
+int last_clicked_button = 0; //retine indicele ultimului buton apasat care are legata o functie de desenare
+int vp_tl_x = 40, vp_tl_y = 30; // coordonate implicite stanga sus viewport
+int vp_dr_x = 1080, vp_dr_y = 720; // coordonate implicite dreapta jos viewport
+int FIRST_WINDOW = 1; //variabila care retine daca este prima fereastra deschisa
+
+#endif //INC_3D_EDITOR_V2_GLOBALVARIABLES_H
