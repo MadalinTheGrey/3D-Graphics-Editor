@@ -1,10 +1,5 @@
-#include <iostream>
-#include <stdio.h>
-#include "graphics.h"
 #include "Initialization.h"
-#include "Corp.h"
 #include "Render3D.h"
-#include "GlobalVariables.h"
 
 using namespace std;
 
@@ -13,5 +8,6 @@ int main()
     InitializeWindow();
     InitializeInterface();
     registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
-    LoadFromFile();
+    readFromFile(R"(D:\Pogramming\IP\Editor de grafica 3D\SavedObjects\Corp1.txt)");
+    render3D();
 }
