@@ -79,7 +79,7 @@ public:
 	//-------------------------------------------Metode-------------------------------------------
 
 	/// returneaza proiectia unui punct 3D pe planul ecranului
-	Punct Punct3Dto2D(Punct3D A)
+	static Punct Punct3Dto2D(Punct3D A)
 	{
 		Punct P;
 		P.x = A.x * dist_obs / (dist_obs + A.z);
@@ -88,7 +88,7 @@ public:
 	}
 
 	//converteste un punct 2D in 3D cunoscand pozitia sa in z
-	Punct3D Punct2Dto3D(Punct A, int z_pos)
+	static Punct3D Punct2Dto3D(Punct A, int z_pos)
 	{
 		Punct3D P;
 		P.x = A.x * (dist_obs + z_pos) / dist_obs;
@@ -212,7 +212,6 @@ class Corp
 public:
 	//---------------------------------Variabile-------------------------------------------------
 	std::string name;
-	bool selected;
 	Punct3D centru; // centrul corpului
 	Punct tl_corner, lr_corner; // colturile stanga sus si dreapta jos corpului
 	double tx, ty, tz, lx, ly, lz; // t = top, l = lower - determina coordonatele maxime si minime pentru a incadra corpul
@@ -226,7 +225,6 @@ public:
 	Corp()
 	{
 		name = "";
-		selected = false;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
@@ -235,7 +233,6 @@ public:
 	Corp(std::vector<Punct3D> pncte, std::vector<Linie> lnii, std::string nume)
 	{
 		name = nume;
-		selected = false;
 		tx = ty = tz = 1280;
 		lx = ly = lz = 0;
 		centru = { 0, 0, 0 };
@@ -291,13 +288,13 @@ public:
 	void AfisareCorp()
 	{
 		Punct3D tl(tx, ty, lz);
-		Punct TL = TL.Punct3Dto2D(tl);
+		Punct TL = Punct::Punct3Dto2D(tl);
 		TL.ConvertCoord();
 		for (auto& l : linii)
 		{
 			Punct P1, P2;
-			P1 = P1.Punct3Dto2D(puncte[l.A]);
-			P2 = P2.Punct3Dto2D(puncte[l.B]);
+			P1 = Punct::Punct3Dto2D(puncte[l.A]);
+			P2 = Punct::Punct3Dto2D(puncte[l.B]);
 			P1.ConvertCoord();
 			P2.ConvertCoord();
 			P1.x = zoom * (P1.x - TL.x) + TL.x - offsetX;
@@ -306,8 +303,6 @@ public:
 			P2.y = zoom * (P2.y - TL.y) + TL.y - offsetY;
 			drawLine(P1.x, P1.y, P2.x, P2.y);
 		}
-		if (selected)
-			drawEmptyRectangle(tl_corner.x - offsetX - 10, tl_corner.y - offsetY - 10, zoom * (lr_corner.x - tl_corner.x) + tl_corner.x - offsetX + 10, zoom * (lr_corner.y - tl_corner.y) + tl_corner.y - offsetY + 10, COLOR(118, 118, 118), 1, DOTTED_LINE);
 	}
 
 	///Determina centrul si colturile corpului
@@ -328,10 +323,10 @@ public:
 		centru.y = (ty + ly) / 2;
 		centru.z = (tz + lz) / 2;
 		Punct3D P(tx, ty, lz);
-		tl_corner = tl_corner.Punct3Dto2D(P);
+		tl_corner = Punct::Punct3Dto2D(P);
 		tl_corner.ConvertCoord();
 		P.x = lx; P.y = ly; P.z = tz;
-		lr_corner = lr_corner.Punct3Dto2D(P);
+		lr_corner = Punct::Punct3Dto2D(P);
 		lr_corner.ConvertCoord();
 	}
 	
@@ -442,18 +437,17 @@ class Scena
 {
 public:
 	std::vector<Corp> corpuri;
-	int nr_corp_selectate; //numarul de corpuri selectate la oricare moment
+	std::vector<int> corpuri_selectate;
 
 	//------------------------------------Constructori--------------------------------
 
 	Scena()
 	{
-		nr_corp_selectate = 0;
+
 	}
 
 	Scena(std::vector<Corp> corp)
 	{
-		nr_corp_selectate = 0;
 		corpuri = move(corp);
 	}
 
@@ -462,29 +456,30 @@ public:
 	void AdaugareCorp()
 	{
 		Corp C;
-		C.selected = true;
-		nr_corp_selectate++;
 		corpuri.push_back(C);
+		corpuri_selectate.push_back(corpuri.size() - 1);
 	}
 
 	void ChangeSelected(int mouse_x, int mouse_y)
 	{
-		for (auto& C : corpuri)
+		bool is_selected = false;
+		int i, j;
+		for (i = 0; i < corpuri.size(); i++)
 		{
-			///de modificat astea cu zoom offset etc. + why tf nu merge rotatia
+			Corp C = corpuri[i];
+			//cream colturile luand in considerare zoom-ul si offset-ul
 			Punct TL(C.tl_corner.x - offsetX - 10, C.tl_corner.y - offsetY - 10), LR(zoom * (C.lr_corner.x - C.tl_corner.x) + C.tl_corner.x - offsetX + 10, zoom * (C.lr_corner.y - C.tl_corner.y) + C.tl_corner.y - offsetY + 10);
-			if (mouse_x >= TL.x && mouse_x <= LR.x && mouse_y >= TL.y && mouse_y <= LR.y)
+			if (mouse_x >= TL.x && mouse_x <= LR.x && mouse_y >= TL.y && mouse_y <= LR.y) //verificam daca mouse-ul era in interiorul corpului cand s-a facut click
 			{
-				if (C.selected == true)
+				for (j = 0; is_selected == false && j < corpuri_selectate.size(); j++)
+					if (corpuri_selectate[j] == i)
+						is_selected = true;
+				if (is_selected)
 				{
-					C.selected = false;
-					nr_corp_selectate--;
+					j--; //daca s-a gasit corpul in corpuri_selectate se va trece oricum la urmatorul asa ca trebuie sa decrementam
+					corpuri_selectate.erase(corpuri_selectate.begin() + j);
 				}
-				else
-				{
-					C.selected = true;
-					nr_corp_selectate++;
-				}
+				else corpuri_selectate.push_back(i);
 				clearviewport();
 				IncarcaScena();
 			}
@@ -497,6 +492,10 @@ public:
 		{
 			C.DeterminaCentru_Colturi();
 			C.AfisareCorp();
+			//evidentiaza corpurile selectate
+			for (auto& i : S.corpuri_selectate)
+				if (S.corpuri[i] == C)
+					drawEmptyRectangle(C.tl_corner.x - offsetX - 10, C.tl_corner.y - offsetY - 10, zoom * (C.lr_corner.x - C.tl_corner.x) + C.tl_corner.x - offsetX + 10, zoom * (C.lr_corner.y - C.tl_corner.y) + C.tl_corner.y - offsetY + 10, COLOR(118, 118, 118), 1, DOTTED_LINE);
 		}
 	}
 } S;
