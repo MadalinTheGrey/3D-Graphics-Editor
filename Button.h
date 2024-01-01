@@ -84,14 +84,14 @@ static void InitializeButtons() {
 }
 
 void checkMouseClick(int x, int y) {
-    bool is_button = false;
+    bool is_top_menu_button = false;
     for (auto& button : buttons)
         if (x >= button.x1 && x <= button.x2 && y >= button.y1 && y <= button.y2)
         {
-            is_button = true;
+            is_top_menu_button = true;
             button.onClick();
         }
-    if (!is_button)
+    if (!is_top_menu_button)
     {
         if (buttons[last_clicked_button].name == "Draw Line" && S.corpuri_selectate.size() == 1)
         {
