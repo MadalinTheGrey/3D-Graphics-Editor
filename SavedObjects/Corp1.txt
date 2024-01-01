@@ -1,0 +1,56 @@
+Corp: Corp_1
+Punct: 300 300 0
+Punct: 400 300 0
+Punct: 400 400 0
+Punct: 300 400 0
+Punct: 300 300 100
+Punct: 400 300 100
+Punct: 400 400 100
+Punct: 300 400 100
+Linie: 0 1
+Linie: 1 2
+Linie: 2 3
+Linie: 3 0
+Linie: 4 5
+Linie: 5 6
+Linie: 6 7
+Linie: 7 4
+Linie: 0 4
+Linie: 1 5
+Linie: 2 6
+Linie: 3 7
+EndCorp
+Corp: Corp_2
+Punct: 500 500 0
+Punct: 600 500 0
+Punct: 600 600 0
+Punct: 500 600 0
+Punct: 500 500 100
+Punct: 600 500 100
+Punct: 600 600 100
+Punct: 500 600 100
+Punct: 500 500 200
+Punct: 600 500 200
+Punct: 600 600 200
+Punct: 500 600 200
+Linie: 0 1
+Linie: 1 2
+Linie: 2 3
+Linie: 3 0
+Linie: 4 5
+Linie: 5 6
+Linie: 6 7
+Linie: 7 4
+Linie: 8 9
+Linie: 9 10
+Linie: 10 11
+Linie: 11 8
+Linie: 0 4
+Linie: 1 5
+Linie: 2 6
+Linie: 3 7
+Linie: 4 8
+Linie: 5 9
+Linie: 6 10
+Linie: 7 11
+EndCorp
