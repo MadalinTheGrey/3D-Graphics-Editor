@@ -6,8 +6,13 @@
 #include <functional>
 #include <cstdio>
 #include <string>
+#include <iostream>
 #include "myGraphics.h"
 #include "Corp.h"
+#include "FilesManager.h"
+#include "Render3D.h"
+#include "OpenFileWindow.h"
+#include "GlobalVariables.h"
 
 class Button {
 public:
@@ -35,6 +40,7 @@ static void InitializeButtons() {
     newFileButton.onClick = []() {
         //TODO new file implementation
         printf("New file!\n");
+        //Create a new window with graphics.h and ask for the name of the file
         };
     newFileButton.drawButton();
     buttons.push_back(newFileButton);
@@ -46,8 +52,14 @@ static void InitializeButtons() {
         drawLine(180, 0, 180, 30, COLOR(118, 118, 118), 1);
         };
     openFileButton.onClick = []() {
-        //TODO open file implementation
-        printf("Open file!\n");
+        string path = receivePathToFile();
+        cout << path << '\n';
+        setcurrentwindow(FIRST_WINDOW);
+        setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
+        if (path != "null")
+            readFromFile(path.c_str());
+        else
+            printf("No file selected!\n");
         };
     openFileButton.drawButton();
     buttons.push_back(openFileButton);
@@ -105,6 +117,7 @@ void checkMouseClick(int x, int y) {
         {
             S.ChangeSelected(x, y);
         }
+        last_clicked_button = 0;
     }
 
 }
