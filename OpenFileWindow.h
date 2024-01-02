@@ -28,7 +28,15 @@ vector<string> get_all_files_names_within_folder(string folder)
     return names;
 }
 int cellWidth = 50;
-string receivePathToFile() {
+string receivePathToFile(int first = 0) {
+    if (first == 1) {
+        TCHAR NPath[MAX_PATH];
+        GetCurrentDirectory(MAX_PATH, NPath);
+        std::string path(NPath);
+        path += "\\SavedObjects";
+        vector<string> files = get_all_files_names_within_folder(path);
+        return path + "\\" + files[0];
+    }
     currentWindow = 0;
     initwindow(400, 400, "Open file", 500, 250);
     setviewport(0, 0, 400, 400, 1);
@@ -44,7 +52,7 @@ string receivePathToFile() {
         btt.push_back({ 0, i * cellWidth, getmaxx(), (i + 1) * cellWidth });
     }
     while (GetAsyncKeyState(VK_ESCAPE) == 0) {
-        if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
+        if (GetAsyncKeyState(VK_LBUTTON)) {
             for (int i = 0; i < btt.size(); ++i) {
                 if (mousex() > btt[i].x1 && mousex() < btt[i].x2 && mousey() > btt[i].y1 && mousey() < btt[i].y2) {
                     printf("Selected file: %s", files[i].c_str());

@@ -78,11 +78,14 @@ void render3D() {
                 for (auto& i : S.corpuri_selectate)
                     S.corpuri[i].RotesteZNeg();
             }
+            if (renderAgain) {
+                setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
+                setbkcolor(BLACK);
+                renderAgain = 0;
+            }
             clearviewport();
             //renderAdditionallyLines(0, 0, getmaxx(), getmaxy(), offsetX, offsetY, zoom);
             S.IncarcaScena();
-            if (renderAgain)
-                renderAgain = 0;
         }
         delay(1);
     }

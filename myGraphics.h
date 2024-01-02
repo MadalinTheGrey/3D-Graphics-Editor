@@ -40,7 +40,7 @@ static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE
     drawLine(x1, y2, x2, y2, color, thickness, style);
     drawLine(x2, y1, x2, y2, color, thickness, style);
 }
-static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int vi = 0) {
+static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int vi = 0, int bg_color = COLOR(35, 35, 35)) {
     //TODO for string too
     setcolor(color);
     settextstyle(1, 0, 0);
@@ -50,10 +50,12 @@ static void writeText(int x, int y, char text[], int color = BLACK, int size = 1
     int x2 = x + textwidth(text);
     int y2 = y + textheight(text);
     if (vi == 0) { //Daca trebuie sa modificam culoarea bg astfel incat sa nu apara chenar negru
+        struct viewporttype vinfo;
+        getviewsettings(&vinfo);
         setviewport(x1, y1, x2, y2, 1);
-        setbkcolor(COLOR(35, 35, 35));
+        setbkcolor(bg_color);
+        outtextxy(0, 0, text);
+        setviewport(vinfo.left, vinfo.top, vinfo.right, vinfo.bottom, 1);
     }
-    outtextxy(0, 0, text);
-    setviewport(0, 0, getmaxx(), getmaxy(), 1);
 }
 #endif //INC_3D_EDITOR_V2_MYGRAPHICS_H

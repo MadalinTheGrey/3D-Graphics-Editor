@@ -1,6 +1,5 @@
 #ifndef INC_3D_EDITOR_V2_BUTTON_H
 #define INC_3D_EDITOR_V2_BUTTON_H
-
 #include <utility>
 #include <vector>
 #include <functional>
@@ -13,13 +12,13 @@
 #include "Render3D.h"
 #include "OpenFileWindow.h"
 #include "GlobalVariables.h"
-
+using namespace std;
 class Button {
 public:
     std::string name;
     int x1, y1, x2, y2;
-    explicit Button(std::string name, int x1 = 0, int y1 = 0, int x2 = 0, int y2 = 0) {
-        this->name = std::move(name);
+    Button(std::string name = "", int x1 = 0, int y1 = 0, int x2 = 0, int y2 = 0) {
+        this->name = name;
         this->x1 = x1;
         this->y1 = y1;
         this->x2 = x2;
@@ -28,8 +27,32 @@ public:
     std::function<void()> drawButton;
     std::function<void()> onClick;
 };
-std::vector<Button> buttons;
 
+std::vector<Button> buttons;
+std::vector<Button> chooseCorpToEdit;
+
+
+void InitializeRightMenu() {
+    int ystart = 0, cellSize = 40;
+    chooseCorpToEdit.clear();
+    setviewport(1080, 30, getmaxx(), getmaxy(), 1);
+    clearviewport();
+    drawFilledRectangle(0, 0, getmaxx(), getmaxy(), COLOR(20,20,20));
+    for (int i = 0; i < S.corpuri.size(); ++i) {
+        Button bt = *new Button(S.corpuri[i].name, 1080, ystart + 30, 1280, ystart + cellSize + 30);
+        chooseCorpToEdit.push_back(bt);
+        printf("Index is: %d\n", i);
+        chooseCorpToEdit[i].onClick = [i]() {
+            printf("%s\n", chooseCorpToEdit[i].name.c_str());
+            };
+        ystart += cellSize;
+        drawEmptyRectangle(0, ystart - cellSize, getmaxx() - 10, ystart, COLOR(182, 182, 182));
+        writeText(1080 + 20, ystart + 23, (char*)S.corpuri[i].name.c_str(), COLOR(182, 182, 182), 1, 0, COLOR(20, 20, 20));
+
+    }
+    setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
+    renderAgain = 1;
+    }
 static void InitializeButtons() {
     //New file button
     Button newFileButton = *new Button("New file", 0, 0, 90, 30);
@@ -57,7 +80,7 @@ static void InitializeButtons() {
         setcurrentwindow(FIRST_WINDOW);
         setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
         if (path != "null")
-            readFromFile(path.c_str());
+            readFromFile(path.c_str()), InitializeRightMenu();
         else
             printf("No file selected!\n");
         };
@@ -98,6 +121,12 @@ static void InitializeButtons() {
 void checkMouseClick(int x, int y) {
     bool is_top_menu_button = false;
     for (auto& button : buttons)
+        if (x >= button.x1 && x <= button.x2 && y >= button.y1 && y <= button.y2)
+        {
+            is_top_menu_button = true;
+            button.onClick();
+        }
+    for (auto& button : chooseCorpToEdit)
         if (x >= button.x1 && x <= button.x2 && y >= button.y1 && y <= button.y2)
         {
             is_top_menu_button = true;
