@@ -45,7 +45,7 @@ public:
 class Punct
 {
 public:
-	double x , y;
+	double x, y;
 
 	//---------------------------------------Constructori-----------------------------------------
 
@@ -96,7 +96,7 @@ public:
 		P.z = z_pos;
 		return P;
 	}
-	
+
 	///converteste coordonatele reale in coordonate pe ecran
 	void ConvertCoord()
 	{
@@ -329,7 +329,7 @@ public:
 		lr_corner = Punct::Punct3Dto2D(P);
 		lr_corner.ConvertCoord();
 	}
-	
+
 	//Adauga un punct in std::vectorul de puncte
 	void AdaugarePunct(Punct3D P)
 	{
@@ -358,7 +358,7 @@ public:
 	void RotesteXPoz()
 	{
 		double cz, cy;
-		for (auto &P : puncte)
+		for (auto& P : puncte)
 		{
 			cy = P.y - centru.y;
 			cz = P.z - centru.z;
@@ -371,7 +371,7 @@ public:
 	void RotesteXNeg()
 	{
 		double cz, cy;
-		for (auto &P : puncte)
+		for (auto& P : puncte)
 		{
 			cy = P.y - centru.y;
 			cz = P.z - centru.z;
@@ -384,7 +384,7 @@ public:
 	void RotesteYPoz()
 	{
 		double cz, cx;
-		for (auto &P : puncte)
+		for (auto& P : puncte)
 		{
 			cx = P.x - centru.x;
 			cz = P.z - centru.z;
@@ -397,7 +397,7 @@ public:
 	void RotesteYNeg()
 	{
 		double cz, cx;
-		for (auto &P : puncte)
+		for (auto& P : puncte)
 		{
 			cx = P.x - centru.x;
 			cz = P.z - centru.z;
@@ -410,7 +410,7 @@ public:
 	void RotesteZPoz()
 	{
 		double cy, cx;
-		for (auto &P : puncte)
+		for (auto& P : puncte)
 		{
 			cx = P.x - centru.x;
 			cy = P.y - centru.y;
@@ -423,7 +423,7 @@ public:
 	void RotesteZNeg()
 	{
 		double cy, cx;
-		for (auto &P : puncte)
+		for (auto& P : puncte)
 		{
 			cx = P.x - centru.x;
 			cy = P.y - centru.y;

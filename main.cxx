@@ -1,13 +1,14 @@
-#include "Initialization.h"
+#include "myGraphics.h"
+#include "Interface.h"
 #include "Render3D.h"
-
+#include "EditObject.h"
 using namespace std;
-
-int main()
-{
+int main() {
     InitializeWindow();
     InitializeInterface();
     registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
-    readFromFile(R"(D:\Pogramming\IP\Editor de grafica 3D\SavedObjects\Corp1.txt)");
+    readFromFile(R"(D:\Andrei\Downloads\BGI2010\bgi\SavedObjects\Corp1.txt)");
+    InitializeRightMenu();
     render3D();
+    return 0;
 }

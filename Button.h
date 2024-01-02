@@ -44,7 +44,7 @@ static void InitializeButtons() {
         };
     newFileButton.drawButton();
     buttons.push_back(newFileButton);
-    
+
     //Open file button
     Button openFileButton = *new Button("Open file", 90, 0, 180, 30);
     openFileButton.drawButton = []() {
@@ -63,10 +63,10 @@ static void InitializeButtons() {
         };
     openFileButton.drawButton();
     buttons.push_back(openFileButton);
-    
+
     //New 3D Form button
     Button new_3D_form = *new Button("New form", 180, 0, 275, 30);
-    new_3D_form.drawButton = []() 
+    new_3D_form.drawButton = []()
         {
             writeText(190, 25, "New form", COLOR(182, 182, 182), 1);
             drawLine(275, 0, 275, 30, COLOR(118, 118, 118), 1);

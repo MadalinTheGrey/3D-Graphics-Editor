@@ -30,28 +30,31 @@ vector<string> get_all_files_names_within_folder(string folder)
 int cellWidth = 50;
 string receivePathToFile() {
     currentWindow = 0;
-    initwindow(400, 400, "Open file",500,250);
-    setviewport(0,0,400,400,1);
-    std::string path = "D:/Pogramming/IP/Editor de grafica 3D/SavedObjects";
+    initwindow(400, 400, "Open file", 500, 250);
+    setviewport(0, 0, 400, 400, 1);
+    TCHAR NPath[MAX_PATH];
+    GetCurrentDirectory(MAX_PATH, NPath);
+    std::string path(NPath);
+    path+="\\SavedObjects";
     vector<string> files = get_all_files_names_within_folder(path);
-    for (int i = 0; i<files.size();++i) {
-        char * cstr(const_cast<char*>(files[i].c_str()));
-        drawEmptyRectangle(0, i*cellWidth, getmaxx(), (i+1)*cellWidth);
-        outtextxy(10, i*cellWidth+10, cstr);
-        btt.push_back({0, i*cellWidth, getmaxx(), (i+1)*cellWidth});
+    for (int i = 0; i < files.size(); ++i) {
+        char* cstr(const_cast<char*>(files[i].c_str()));
+        drawEmptyRectangle(0, i * cellWidth, getmaxx(), (i + 1) * cellWidth);
+        outtextxy(10, i * cellWidth + 10, cstr);
+        btt.push_back({ 0, i * cellWidth, getmaxx(), (i + 1) * cellWidth });
     }
     while (GetAsyncKeyState(VK_ESCAPE) == 0) {
-        if(GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-			for (int i = 0; i < btt.size(); ++i) {
-				if (mousex() > btt[i].x1 && mousex() < btt[i].x2 && mousey() > btt[i].y1 && mousey() < btt[i].y2) {
+        if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
+            for (int i = 0; i < btt.size(); ++i) {
+                if (mousex() > btt[i].x1 && mousex() < btt[i].x2 && mousey() > btt[i].y1 && mousey() < btt[i].y2) {
                     printf("Selected file: %s", files[i].c_str());
                     renderAgain = 1; currentWindow = 1;
                     closegraph(CURRENT_WINDOW);
                     path = path + "/" + files[i];
-					return path;
-				}
-			}
-		}
+                    return path;
+                }
+            }
+        }
     }
     //closegraph(CURRENT_WINDOW);
     return  "null";
