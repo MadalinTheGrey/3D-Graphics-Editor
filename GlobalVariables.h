@@ -17,5 +17,5 @@ int last_clicked_button = 0; //retine indicele ultimului buton apasat care are l
 int vp_tl_x = 40, vp_tl_y = 30; // coordonate implicite stanga sus viewport
 int vp_dr_x = 1080, vp_dr_y = 720; // coordonate implicite dreapta jos viewport
 int FIRST_WINDOW = 1; //variabila care retine daca este prima fereastra deschisa
-
+std::string current_file = ""; //numele fisierului curent
 #endif //INC_3D_EDITOR_V2_GLOBALVARIABLES_H

@@ -29,12 +29,14 @@ vector<string> get_all_files_names_within_folder(string folder)
 }
 int cellWidth = 50;
 string receivePathToFile(int first = 0) {
+    btt.clear();
     if (first == 1) {
         TCHAR NPath[MAX_PATH];
         GetCurrentDirectory(MAX_PATH, NPath);
         std::string path(NPath);
         path += "\\SavedObjects";
         vector<string> files = get_all_files_names_within_folder(path);
+        current_file = files[0];
         return path + "\\" + files[0];
     }
     currentWindow = 0;
@@ -56,6 +58,7 @@ string receivePathToFile(int first = 0) {
             for (int i = 0; i < btt.size(); ++i) {
                 if (mousex() > btt[i].x1 && mousex() < btt[i].x2 && mousey() > btt[i].y1 && mousey() < btt[i].y2) {
                     printf("Selected file: %s", files[i].c_str());
+                    current_file = files[i];
                     renderAgain = 1; currentWindow = 1;
                     closegraph(CURRENT_WINDOW);
                     path = path + "/" + files[i];

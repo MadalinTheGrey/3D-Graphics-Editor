@@ -14,6 +14,7 @@ void readFromFile(string path) {
         return;
     }
     else {
+        //current_file = path;
         vector<Corp> corpuri;
         string read, r1, r2, r3;
         while (fin >> read) {
@@ -41,6 +42,25 @@ void readFromFile(string path) {
         }
         S = Scena(scena);
     }
+    fin.close();
 }
-
+void SaveObjectInFile(string path) {
+    TCHAR NPath[MAX_PATH];
+    GetCurrentDirectory(MAX_PATH, NPath);
+    std::string ppath(NPath);
+    path = ppath + "\\SavedObjects\\" + path;
+    printf("Saving object in path %s\n", path.c_str());
+    ofstream fout(path.c_str());
+    for (auto corp : S.corpuri) {
+		fout << "Corp: " << corp.name << endl;
+		for(auto punct: corp.puncte) {
+			fout << "Punct: " << punct.x << " " << punct.y << " " << punct.z << endl;
+		}
+		for(auto linie: corp.linii) {
+			fout << "Linie: " << linie.A << " " << linie.B << endl;
+		}
+		fout << "EndCorp" << endl;
+    }
+    fout.close();
+}
 #endif //INC_3D_EDITOR_V2_FILESMANAGER_H
