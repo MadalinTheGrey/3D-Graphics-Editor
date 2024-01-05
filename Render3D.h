@@ -24,21 +24,17 @@ void render3D() {
             || GetAsyncKeyState(0x31) || GetAsyncKeyState(0x32) || GetAsyncKeyState(0x33) || GetAsyncKeyState(0x34)
             || GetAsyncKeyState(0x35) || GetAsyncKeyState(0x36) || renderAgain) && currentWindow) {
             if(GetAsyncKeyState(VK_LEFT)) {
-                for(auto& C : S.corpuri)
-                    for(auto &P : C.puncte)
-                        P.x -= 10;
+                for (auto& i : S.corpuri_selectate)
+                    S.corpuri[i].offset_local.x += 10;
             } if(GetAsyncKeyState(VK_RIGHT)) {
-                for(auto& C : S.corpuri)
-                    for(auto& P : C.puncte)
-                        P.x += 10;
+                for (auto& i : S.corpuri_selectate)
+                    S.corpuri[i].offset_local.x -= 10;
             } if(GetAsyncKeyState(VK_UP)) {
-                for(auto& C : S.corpuri)
-                    for(auto& P : C.puncte)
-                        P.y -= 10;
+                for (auto& i : S.corpuri_selectate)
+                    S.corpuri[i].offset_local.y += 10;
             } if(GetAsyncKeyState(VK_DOWN)) {
-                for(auto& C : S.corpuri)
-                    for(auto& P : C.puncte)
-                        P.y += 10;
+                for (auto& i : S.corpuri_selectate)
+                    S.corpuri[i].offset_local.y -= 10;
             } if(GetAsyncKeyState(0x57)) { //W
                 offsetY+=10;
             } if(GetAsyncKeyState(	0x53)) { //S
@@ -47,11 +43,11 @@ void render3D() {
                 offsetX+=10;
             } if(GetAsyncKeyState(0x44)) { //D
                 offsetX-=10;
-            } if(GetAsyncKeyState(0x5A)) {
+            } if(GetAsyncKeyState(0x5A)) { //Z
                 for(auto& C : S.corpuri)
                     for(auto& P : C.puncte)
                         P.z -= 10;
-            } if(GetAsyncKeyState(0x58)) {
+            } if(GetAsyncKeyState(0x58)) { //X
                 for (auto& C : S.corpuri)
                     for(auto& P : C.puncte)
                         P.z += 10;
