@@ -14,13 +14,11 @@ void readFromFile(string path) {
         return;
     }
     else {
-        vector<Corp> corpuri;
-        string read, r1, r2, r3;
+        string read, r1, r2, r3, nume;
         while (fin >> read) {
             if (read == "Corp:") {
-                Corp corp;
                 fin >> read;
-                corp.name = read;
+                nume = read;
                 vector<Punct3D> puncte;
                 vector<Linie> linii;
                 while (read != "EndCorp") {
@@ -34,12 +32,13 @@ void readFromFile(string path) {
                         linii.push_back(*new Linie(stoi(r1), stoi(r2)));
                     }
                 }
-                corp.puncte = puncte;
-                corp.linii = linii;
+                vector<Sectiune> sect;
+                Punct offset = { 0, 0 };
+                Corp corp(puncte, linii, sect, offset, nume);
                 scena.corpuri.push_back(corp);
             }
         }
-        S = Scena(scena);
+        S = Scena(scena.corpuri);
     }
 }
 
