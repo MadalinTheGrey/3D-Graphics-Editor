@@ -1,5 +1,6 @@
 #ifndef INC_3D_EDITOR_V2_MYGRAPHICS_H
 #define INC_3D_EDITOR_V2_MYGRAPHICS_H
+#define _USE_MATH_DEFINES
 #include "graphics.h"
 #include "GlobalVariables.h"
 static void InitializeWindow(int width = windowWidth, int height = windowHeight, char name[] = windowName, int bgColor = windowBgColor, int posX = windowPosX, int posY = windowPosY) {
@@ -40,18 +41,27 @@ static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE
     drawLine(x1, y2, x2, y2, color, thickness, style);
     drawLine(x2, y1, x2, y2, color, thickness, style);
 }
+static void drawCircle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
+{
+    double diametru = y2 - y1, raza = diametru / 2, lungime = 2 * PI * raza;
+    double centru_x = (double)(x1 + x2) / 2, centru_y = (double)(y1 + y2) / 2;
+    int nr_puncte = abs(y2 - y1) / 4;
+    if (nr_puncte & 1) nr_puncte++;
+    
+}
 static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int vi = 0) {
     //TODO for string too
     setcolor(color);
     settextstyle(1, 0, 0);
-    setusercharsize(1, 2, 1, 2);
+    setusercharsize(1, 2, 1, 2); //multx / divx, multy / divy
     int x1 = x;
     int y1 = y - textheight(text);
     int x2 = x + textwidth(text);
     int y2 = y + textheight(text);
     if (vi == 0) { //Daca trebuie sa modificam culoarea bg astfel incat sa nu apara chenar negru
+        int bgcolor = getpixel(x, y);
         setviewport(x1, y1, x2, y2, 1);
-        setbkcolor(COLOR(35, 35, 35));
+        setbkcolor(bgcolor);
     }
     outtextxy(0, 0, text);
     setviewport(0, 0, getmaxx(), getmaxy(), 1);
