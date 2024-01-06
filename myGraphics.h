@@ -41,13 +41,11 @@ static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE
     drawLine(x1, y2, x2, y2, color, thickness, style);
     drawLine(x2, y1, x2, y2, color, thickness, style);
 }
-static void drawCircle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
+static void drawEmptyCircle(int x, int y, int raza, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
 {
-    double diametru = y2 - y1, raza = diametru / 2, lungime = 2 * PI * raza;
-    double centru_x = (double)(x1 + x2) / 2, centru_y = (double)(y1 + y2) / 2;
-    int nr_puncte = abs(y2 - y1) / 4;
-    if (nr_puncte & 1) nr_puncte++;
-    
+    setcolor(color);
+    setlinestyle(style, 0, thickness);
+    circle(x, y, raza);
 }
 static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int vi = 0) {
     //TODO for string too
