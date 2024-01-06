@@ -344,21 +344,15 @@ public:
 		puncte.push_back(P);
 	}
 
+	//Elimina ultimul punct adaugat in vectorul de puncte
+	void EliminaPunct()
+	{
+		puncte.pop_back();
+	}
+
 	void AdaugareLinie(Linie L)
 	{
 		linii.push_back(L);
-	}
-
-	///deseneaza un dreptunghi pe ecran pentru user
-	void UserDrawRectangle()
-	{
-
-	}
-
-	///deseneaza un cerc pe ecran pentru user
-	void UserDrawCircle()
-	{
-
 	}
 
 	///va roti corpul in sensul acelor de ceasornic pe axa X
@@ -546,59 +540,128 @@ public:
 	{
 		if (draw_step == 0)
 		{
-			int c; //ultima cifra a pozitiei mouse-ului pe ecran
-			mouse_x -= vp_tl_x; mouse_y -= vp_tl_y;
-			if (draw_precision == 5)
-			{
-				c = mouse_x % 10;
-				if (c > 5) c -= 5;
-				if (c >= 3) mouse_x += (5 - c);
-				else mouse_x -= c;
-				c = mouse_y % 10;
-				if (c > 5) c -= 5;
-				if (c >= 3) mouse_y += (5 - c);
-				else mouse_y -= c;
-			}
-			else if (draw_precision == 10)
-			{
-				c = mouse_x % 10;
-				if (c > 5) mouse_x += (10 - c);
-				else mouse_x -= c;
-				c = mouse_y % 10;
-				if (c > 5) mouse_y += (10 - c);
-				else mouse_y -= c;
-			}
 			Punct P(mouse_x, mouse_y);
 			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
 		}
 		else if (draw_step == 1)
 		{
-			int c; //ultima cifra a pozitiei mouse-ului pe ecran
-			mouse_x -= vp_tl_x; mouse_y -= vp_tl_y;
-			if (draw_precision == 5)
-			{
-				c = mouse_x % 10;
-				if (c > 5) c -= 5;
-				if (c >= 3) mouse_x += (5 - c);
-				else mouse_x -= c;
-				c = mouse_y % 10;
-				if (c > 5) c -= 5;
-				if (c >= 3) mouse_y += (5 - c);
-				else mouse_y -= c;
-			}
-			else if (draw_precision == 10)
-			{
-				c = mouse_x % 10;
-				if (c > 5) mouse_x += (10 - c);
-				else mouse_x -= c;
-				c = mouse_y % 10;
-				if (c > 5) mouse_y += (10 - c);
-				else mouse_y -= c;
-			}
 			Punct P(mouse_x, mouse_y);
 			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
 			int len = corpuri[ind_corp].puncte.size();
 			corpuri[ind_corp].AdaugareLinie(Linie(len - 2, len - 1));
+			clearviewport();
+			IncarcaScena();
+		}
+	}
+
+	///deseneaza un dreptunghi pe ecran pentru user
+	void UserDrawRectangle(int mouse_x, int mouse_y, int draw_step, int z_pos, int ind_corp)
+	{
+		if (draw_step == 0)
+		{
+			Punct P(mouse_x, mouse_y);
+			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+		}
+		else if (draw_step == 1)
+		{
+			Punct P(mouse_x, mouse_y);
+			int len = corpuri[ind_corp].puncte.size();
+			Punct P1 = Punct::Punct3Dto2D(corpuri[ind_corp].puncte[len - 1]);
+			P1.ConvertCoord();
+			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(Punct(mouse_x, P1.y), z_pos));
+			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(Punct(P1.x, mouse_y), z_pos));
+			len = corpuri[ind_corp].puncte.size();
+			corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - 4));
+			corpuri[ind_corp].AdaugareLinie(Linie(len - 4, len - 3));
+			corpuri[ind_corp].AdaugareLinie(Linie(len - 3, len - 2));
+			corpuri[ind_corp].AdaugareLinie(Linie(len - 2, len - 1));
+			clearviewport();
+			IncarcaScena();
+		}
+	}
+
+	///deseneaza un cerc pe ecran pentru user
+	void UserDrawCircle(int mouse_x, int mouse_y, int draw_step, int z_pos, int ind_corp)
+	{
+		if (draw_step == 0)
+		{
+			Punct P(mouse_x, mouse_y);
+			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+		}
+		else if (draw_step == 1)
+		{
+			int len = S.corpuri[ind_corp].puncte.size();
+			Punct P(mouse_x, mouse_y);
+			Punct P1 = Punct::Punct3Dto2D(S.corpuri[ind_corp].puncte[len - 1]);
+			P1.ConvertCoord();
+			S.corpuri[ind_corp].EliminaPunct(); //eliminam punctul adaugat pentru referinta
+			len--;
+			Punct centru((P.x + P1.x) / 2, (P.y + P1.y) / 2);
+			double width = abs(P.x - P1.x), height = abs(P.y - P1.y), a = width / 2, b = height / 2;
+			int nr_puncte = (width + height) / 8;
+			double unghi_dif = 2 * PI / nr_puncte; //unghiul dintre puncte relativ la centru
+			for (double i = 0; i < nr_puncte; i++)
+			{
+				Punct A(centru.x + a * cos(i * unghi_dif), centru.y + b * sin(i * unghi_dif));
+				S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(A, z_pos));
+				len++;
+				if (i > 0) S.corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - 2));
+			}
+			S.corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - nr_puncte));
+			clearviewport();
+			IncarcaScena();
+		}
+	}
+
+	void UserAddPoint(int mouse_x, int mouse_y, int z_pos, int ind_corp)
+	{
+		Punct P(mouse_x, mouse_y);
+		S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+		clearviewport();
+		IncarcaScena();
+	}
+
+	void UserLinkPoints(int mouse_x, int mouse_y, int draw_step, int ind_corp)
+	{
+		static int punct_selectat = 0;
+		double dist_min = 200000, dist = 0, diff_x, diff_y;
+		Punct P1;
+		if (draw_step == 0)
+		{
+			for (int i = 0; i < S.corpuri[ind_corp].puncte.size(); i++)
+			{
+				Punct3D P = S.corpuri[ind_corp].puncte[i];
+				P1 = Punct::Punct3Dto2D(P);
+				P1.ConvertCoord();
+				diff_x = abs(P1.x - mouse_x);
+				diff_y = abs(P1.y - mouse_y);
+				dist = sqrt(diff_x * diff_x + diff_y * diff_y);
+				if (dist < dist_min)
+				{
+					dist_min = dist;
+					punct_selectat = i;
+				}
+			}
+		}
+		else
+		{
+			int punct_nou = 0;
+			for (int i = 0; i < S.corpuri[ind_corp].puncte.size(); i++)
+			{
+				Punct3D P = S.corpuri[ind_corp].puncte[i];
+				P1 = Punct::Punct3Dto2D(P);
+				P1.ConvertCoord();
+				diff_x = abs(P1.x - mouse_x);
+				diff_y = abs(P1.y - mouse_y);
+				dist = sqrt(diff_x * diff_x + diff_y * diff_y);
+				if (dist < dist_min)
+				{
+					dist_min = dist;
+					punct_nou = i;
+				}
+			}
+			S.corpuri[ind_corp].AdaugareLinie(Linie(punct_selectat, punct_nou));
 			clearviewport();
 			IncarcaScena();
 		}
