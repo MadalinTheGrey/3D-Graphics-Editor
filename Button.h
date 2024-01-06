@@ -79,20 +79,20 @@ static void InitializeButtons() {
     draw_line.drawButton();
     buttons.push_back(draw_line);
 
-    //Draw square button
-    Button draw_square = *new Button("Draw square", 0, 150, 40, 190);
-    draw_square.drawButton = []()
+    //Draw rectangle button
+    Button draw_rectangle = *new Button("Draw rectangle", 0, 150, 40, 190);
+    draw_rectangle.drawButton = []()
         {
             drawLine(0, 150, 40, 150, COLOR(118, 118, 118), 1);
             drawLine(0, 190, 40, 190, COLOR(118, 118, 118), 1);
             drawEmptyRectangle(10, 160, 30, 180);
         };
-    draw_square.onClick = []()
+    draw_rectangle.onClick = []()
         {
             last_clicked_button = 3;
         };
-    draw_square.drawButton();
-    buttons.push_back(draw_square);
+    draw_rectangle.drawButton();
+    buttons.push_back(draw_rectangle);
 
     //Draw circle button
     Button draw_circle = *new Button("Draw circle", 0, 200, 40, 240);
@@ -100,7 +100,7 @@ static void InitializeButtons() {
         {
             drawLine(0, 200, 40, 200, COLOR(118, 118, 118), 1);
             drawLine(0, 240, 40, 240, COLOR(118, 118, 118), 1);
-            drawCircle(10, 210, 30, 230);
+            drawEmptyCircle(20, 220, 12);
         };
     draw_circle.onClick = []()
         {
@@ -108,6 +108,47 @@ static void InitializeButtons() {
         };
     draw_circle.drawButton();
     buttons.push_back(draw_circle);
+
+    //Add point button
+    Button add_point = *new Button("Add point", 0, 250, 40, 290);
+    add_point.drawButton = []()
+        {
+            drawLine(0, 250, 40, 250, COLOR(118, 118, 118), 1);
+            drawLine(0, 290, 40, 290, COLOR(118, 118, 118), 1);
+            drawEmptyCircle(20, 270, 2, WHITE, 3);
+        };
+    add_point.onClick = []()
+        {
+            last_clicked_button = 5;
+        };
+    add_point.drawButton();
+    buttons.push_back(add_point);
+
+    //Link points button
+    Button link_points = *new Button("Link points", 0, 300, 40, 340);
+    link_points.drawButton = []()
+        {
+            drawLine(0, 300, 40, 300, COLOR(118, 118, 118), 1);
+            drawLine(0, 340, 40, 340, COLOR(118, 118, 118), 1);
+            drawLine(10, 320, 30, 320);
+            drawEmptyCircle(10, 320, 2, WHITE, 3);
+            drawEmptyCircle(30, 320, 2, WHITE, 3);
+        };
+    link_points.onClick = []()
+        {
+            last_clicked_button = 6;
+            if (S.corpuri_selectate.size() == 1)
+            {
+                int i = S.corpuri_selectate[0];
+                for (auto& P : S.corpuri[i].puncte)
+                {
+                    Punct P1 = Punct::Punct3Dto2D(P);
+                    drawEmptyCircle(P1.x, P1.y, 2, BLUE, 3);
+                }
+            }
+        };
+    link_points.drawButton();
+    buttons.push_back(link_points);
 
     //Rotation angle buttons
     writeText(1130, 381, "Rotation angle:", COLOR(182, 182, 182), 1); //x = 1120 -> 1230, y = 355 -> 385
@@ -263,12 +304,63 @@ void checkMouseClick(int x, int y) {
         }
     if (!is_button)
     {
-        if (buttons[last_clicked_button].name == "Draw Line" && S.corpuri_selectate.size() == 1)
+        if (2 <= last_clicked_button && last_clicked_button <= 6)
         {
-            int i = S.corpuri_selectate[0];
-            int z_pos = 100; //pozitia pe z pe care o are sectiunea pe care desenam (ar trebui preluata de undeva)
-            S.UserDrawLine(x, y, form_draw_step, z_pos, i);
-            form_draw_step = 1 - form_draw_step;
+            int c; //ultima cifra a pozitiei mouse-ului pe ecran
+            x -= vp_tl_x; y -= vp_tl_y;
+            if (draw_precision == 5)
+            {
+                c = x % 10;
+                if (c > 5) c -= 5;
+                if (c >= 3) x += (5 - c);
+                else x -= c;
+                c = y % 10;
+                if (c > 5) c -= 5;
+                if (c >= 3) y += (5 - c);
+                else y -= c;
+            }
+            else if (draw_precision == 10)
+            {
+                c = x % 10;
+                if (c > 5) x += (10 - c);
+                else x -= c;
+                c = y % 10;
+                if (c > 5) y += (10 - c);
+                else y -= c;
+            }
+            if (buttons[last_clicked_button].name == "Draw Line" && S.corpuri_selectate.size() == 1)
+            {
+                int i = S.corpuri_selectate[0];
+                int z_pos = 100; //pozitia pe z pe care o are sectiunea pe care desenam (ar trebui preluata de undeva)
+                S.UserDrawLine(x, y, form_draw_step, z_pos, i);
+                form_draw_step = 1 - form_draw_step;
+            }
+            else if (buttons[last_clicked_button].name == "Draw rectangle" && S.corpuri_selectate.size() == 1)
+            {
+                int i = S.corpuri_selectate[0];
+                int z_pos = 100; //pozitia pe z pe care o are sectiunea pe care desenam (ar trebui preluata de undeva)
+                S.UserDrawRectangle(x, y, form_draw_step, z_pos, i);
+                form_draw_step = 1 - form_draw_step;
+            }
+            else if (buttons[last_clicked_button].name == "Draw circle" && S.corpuri_selectate.size() == 1)
+            {
+                int i = S.corpuri_selectate[0];
+                int z_pos = 100; //pozitia pe z pe care o are sectiunea pe care desenam (ar trebui preluata de undeva)
+                S.UserDrawCircle(x, y, form_draw_step, z_pos, i);
+                form_draw_step = 1 - form_draw_step;
+            }
+            else if (buttons[last_clicked_button].name == "Add point" && S.corpuri_selectate.size() == 1)
+            {
+                int i = S.corpuri_selectate[0];
+                int z_pos = 100; //pozitia pe z pe care o are sectiunea pe care desenam (ar trebui preluata de undeva)
+                S.UserAddPoint(x, y, z_pos, i);
+            }
+            else if (buttons[last_clicked_button].name == "Link points" && S.corpuri_selectate.size() == 1)
+            {
+                int i = S.corpuri_selectate[0];
+                S.UserLinkPoints(x, y, form_draw_step, i);
+                form_draw_step = 1 - form_draw_step;
+            }
         }
         else
         {
