@@ -1,5 +1,6 @@
 #ifndef INC_3D_EDITOR_V2_MYGRAPHICS_H
 #define INC_3D_EDITOR_V2_MYGRAPHICS_H
+#define _USE_MATH_DEFINES
 #include "graphics.h"
 #include "GlobalVariables.h"
 static void InitializeWindow(int width = windowWidth, int height = windowHeight, char name[] = windowName, int bgColor = windowBgColor, int posX = windowPosX, int posY = windowPosY) {
@@ -35,27 +36,57 @@ static void drawLine(int x1, int y1, int x2, int y2, int color = WHITE, int thic
 }
 static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
 {
+    struct viewporttype vinfo;
+    getviewsettings(&vinfo);
+    if (x1 < vinfo.left)
+        x1 = vinfo.left;
+    if (x2 > vinfo.right)
+        x2 = vinfo.right;
+    if (y1 < vinfo.top)
+        y1 = vinfo.top;
+    if (y2 > vinfo.bottom)
+        y2 = vinfo.bottom;
     drawLine(x1, y1, x2, y1, color, thickness, style);
     drawLine(x1, y1, x1, y2, color, thickness, style);
     drawLine(x1, y2, x2, y2, color, thickness, style);
     drawLine(x2, y1, x2, y2, color, thickness, style);
 }
-static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int vi = 0, int bg_color = COLOR(35, 35, 35)) {
-    //TODO for string too
+static void drawCircle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
+{
+    double diametru = y2 - y1, raza = diametru / 2, lungime = 2 * PI * raza;
+    double centru_x = (double)(x1 + x2) / 2, centru_y = (double)(y1 + y2) / 2;
+    int nr_puncte = abs(y2 - y1) / 4;
+    if (nr_puncte & 1) nr_puncte++;
+
+}
+
+static void drawEmptyCircle(int x, int y, int raza, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
+{
+    setcolor(color);
+    setlinestyle(style, 0, thickness);
+    circle(x, y, raza);
+}
+static void writeText(int x, int y, char text[], int color = BLACK, int size = 1, int bgcolor = BLACK) {
+    struct viewporttype oldV;
+    getviewsettings(&oldV);
     setcolor(color);
     settextstyle(1, 0, 0);
-    setusercharsize(1, 2, 1, 2);
+    setusercharsize(1, 2, 1, 2); //multx / divx, multy / divy
     int x1 = x;
     int y1 = y - textheight(text);
     int x2 = x + textwidth(text);
     int y2 = y + textheight(text);
-    if (vi == 0) { //Daca trebuie sa modificam culoarea bg astfel incat sa nu apara chenar negru
-        struct viewporttype vinfo;
-        getviewsettings(&vinfo);
-        setviewport(x1, y1, x2, y2, 1);
-        setbkcolor(bg_color);
-        outtextxy(0, 0, text);
-        setviewport(vinfo.left, vinfo.top, vinfo.right, vinfo.bottom, 1);
-    }
+    if (x1 < oldV.left)
+        x1 = oldV.left;
+    if (x2 > oldV.right)
+        x2 = oldV.right;
+    if (y1 < oldV.top)
+        y1 = oldV.top;
+    if (y2 > oldV.bottom)
+        y2 = oldV.bottom;
+    setviewport(x1, y1, x2, y2, 1);
+    setbkcolor(bgcolor);
+    outtextxy(0, 0, text);
+    setviewport(oldV.left, oldV.top, oldV.right, oldV.bottom,1);
 }
 #endif //INC_3D_EDITOR_V2_MYGRAPHICS_H

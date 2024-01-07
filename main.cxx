@@ -1,17 +1,16 @@
-#include "myGraphics.h"
-#include "Interface.h"
+#include "Initialization.h"
 #include "Render3D.h"
-#include "EditObject.h"
+
 using namespace std;
-int main() {
+
+int main()
+{
     InitializeWindow();
     InitializeInterface();
-    registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
-    //readFromFile(R"(D:\Andrei\Downloads\BGI2010\bgi\SavedObjects\Corp1.txt)");
     string path = receivePathToFile(1);
-    printf("%s", path.c_str());
+    printf("Opened: %s\n", path.c_str());
+    //registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
     readFromFile(path);
-    InitializeRightMenu();
     render3D();
     return 0;
 }

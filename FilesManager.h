@@ -14,14 +14,11 @@ void readFromFile(string path) {
         return;
     }
     else {
-        //current_file = path;
-        vector<Corp> corpuri;
-        string read, r1, r2, r3;
+        string read, r1, r2, r3, nume;
         while (fin >> read) {
             if (read == "Corp:") {
-                Corp corp;
                 fin >> read;
-                corp.name = read;
+                nume = read;
                 vector<Punct3D> puncte;
                 vector<Linie> linii;
                 while (read != "EndCorp") {
@@ -35,15 +32,16 @@ void readFromFile(string path) {
                         linii.push_back(*new Linie(stoi(r1), stoi(r2)));
                     }
                 }
-                corp.puncte = puncte;
-                corp.linii = linii;
+                vector<Sectiune> sect;
+                Punct offset = { 0, 0 };
+                Corp corp(puncte, linii, sect, offset, nume);
                 scena.corpuri.push_back(corp);
             }
         }
-        S = Scena(scena);
+        S = Scena(scena.corpuri);
     }
-    fin.close();
 }
+
 void SaveObjectInFile(string path) {
     TCHAR NPath[MAX_PATH];
     GetCurrentDirectory(MAX_PATH, NPath);
@@ -52,14 +50,14 @@ void SaveObjectInFile(string path) {
     printf("Saving object in path %s\n", path.c_str());
     ofstream fout(path.c_str());
     for (auto corp : S.corpuri) {
-		fout << "Corp: " << corp.name << endl;
-		for(auto punct: corp.puncte) {
-			fout << "Punct: " << punct.x << " " << punct.y << " " << punct.z << endl;
-		}
-		for(auto linie: corp.linii) {
-			fout << "Linie: " << linie.A << " " << linie.B << endl;
-		}
-		fout << "EndCorp" << endl;
+        fout << "Corp: " << corp.name << endl;
+        for (auto punct : corp.puncte) {
+            fout << "Punct: " << punct.x << " " << punct.y << " " << punct.z << endl;
+        }
+        for (auto linie : corp.linii) {
+            fout << "Linie: " << linie.A << " " << linie.B << endl;
+        }
+        fout << "EndCorp" << endl;
     }
     fout.close();
 }
