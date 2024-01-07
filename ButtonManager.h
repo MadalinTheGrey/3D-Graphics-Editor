@@ -302,12 +302,12 @@ static void InitializeButtons() {
         editButtonSelectable = true;
         drawFilledRectangle(editButton.x1, editButton.y1, editButton.x2, editButton.y2, COLOR(20,20,20));
         drawEmptyRectangle(editButton.x1, editButton.y1, editButton.x2, editButton.y2, WHITE);
-        writeText(editButton.x1 + 25, editButton.y1 + 25, "Edit Button", WHITE, 1, COLOR(20,20,20));
+        writeText(editButton.x1 + 25, editButton.y1 + 25, "Edit object", WHITE, 1, COLOR(20,20,20));
     };
     editButton.drawButtonDif = [editButton] {
         editButtonSelectable = false;
         drawEmptyRectangle(editButton.x1, editButton.y1, editButton.x2, editButton.y2, WHITE);
-        writeText(editButton.x1 + 25, editButton.y1 + 25, "Edit Button", WHITE, 1, COLOR(20, 20, 20));
+        writeText(editButton.x1 + 25, editButton.y1 + 25, "Edit object", WHITE, 1, COLOR(20, 20, 20));
         drawLine(editButton.x1, editButton.y1, editButton.x1 + 10, editButton.y2, WHITE);
         drawLine(editButton.x1 + 10, editButton.y1, editButton.x1 + 20, editButton.y2, WHITE);
         drawLine(editButton.x1 + 20, editButton.y1, editButton.x1 + 30, editButton.y2, WHITE);
