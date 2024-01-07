@@ -152,7 +152,7 @@ public:
 class Sectiune
 {
 public:
-	std::vector<int> linii_sect; //memoreaza indicii liniilor sectiunii din vectorul de linii al corpului
+	std::vector<Linie> linii_sect; //memoreaza indicii liniilor sectiunii din vectorul de linii al corpului
 	int z; ///pozitia pe axa z a sectiunii
 
 	//---------------------------------Constructori-------------------------------------------
@@ -200,6 +200,10 @@ public:
 	}
 
 	//-----------------------------------Metode-----------------------------------
+	void AddLinie(Linie L)
+	{
+		linii_sect.push_back(L);
+	}
 };
 
 class Corp
