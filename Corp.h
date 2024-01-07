@@ -167,7 +167,7 @@ public:
 		z = poz_z;
 	}
 
-	Sectiune(int poz_z, std::vector<int> B)
+	Sectiune(int poz_z, std::vector<Linie> B)
 	{
 		linii_sect = move(B);
 		z = poz_z;
