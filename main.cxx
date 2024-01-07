@@ -7,7 +7,10 @@ int main()
 {
     InitializeWindow();
     InitializeInterface();
-    registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
-    readFromFile(R"(D:\Pogramming\IP\Editor de grafica 3D\SavedObjects\Corp1.txt)");
+    string path = receivePathToFile(1);
+    printf("Opened: %s\n", path.c_str());
+    //registermousehandler(WM_LBUTTONDOWN, checkMouseClick);
+    readFromFile(path);
     render3D();
+    return 0;
 }
