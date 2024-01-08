@@ -54,12 +54,12 @@ void SaveObjectInFile(string path) {
     path = ppath + "\\SavedObjects\\" + path;
     printf("Saving object in path %s\n", path.c_str());
     ofstream fout(path.c_str());
-    for (auto corp : S.corpuri) {
+    for (auto& corp : S.corpuri) {
         fout << "Corp: " << corp.name << endl;
-        for (auto punct : corp.puncte) {
+        for (auto& punct : corp.puncte) {
             fout << "Punct: " << punct.x << " " << punct.y << " " << punct.z << endl;
         }
-        for (auto linie : corp.linii) {
+        for (auto& linie : corp.linii) {
             fout << "Linie: " << linie.A << " " << linie.B << endl;
         }
         fout << "EndCorp" << endl;
