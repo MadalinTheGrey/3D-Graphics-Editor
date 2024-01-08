@@ -153,7 +153,6 @@ class Sectiune
 {
 public:
 	int z; ///pozitia pe axa z a sectiunii
-
 	//---------------------------------Constructori-------------------------------------------
 
 	Sectiune()
