@@ -14,6 +14,7 @@
 #include "SaveFileWindow.h"
 #include "EditObject.h"
 #include "NewFileWindow.h"
+#include "Faces.h"
 vector<Button> buttons;
 
 static void InitializeButtons() {
@@ -364,4 +365,18 @@ static void InitializeButtons() {
     };
     editButton.drawButtonDif();
     buttons.push_back(editButton);
+    //Faces view button
+    Button facesView = *new Button("Faces", 275, 0, 370, 30);
+    facesView.drawButton = [facesView] {
+        drawLine(facesView.x2, facesView.y1, facesView.x2, facesView.y2, COLOR(182, 182, 182));
+        //drawFilledRectangle(facesView.x1, facesView.y1, facesView.x2, facesView.y2, WHITE);
+        writeText(facesView.x1 + 30, facesView.y1 + 25, "Faces", COLOR(182,182,182), 1, COLOR(35, 35, 35));
+    };
+    facesView.onClick = [] {
+        if (S.corpuri_selectate.size() == 1) {
+            ShowFaces();
+        }
+    };
+    facesView.drawButton();
+    buttons.push_back(facesView);
 }
