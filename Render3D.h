@@ -73,8 +73,20 @@ void render3D() {
                 for (auto& i : S.corpuri_selectate)
                     S.corpuri[i].RotesteZNeg();
             }
-            clearviewport();
-            S.IncarcaScena();
+            if (visualpage == 0) {
+                setactivepage(1);
+                clearviewport();
+                S.IncarcaScena();
+                setvisualpage(1);
+                visualpage = 1;
+            }
+            else {
+                setactivepage(1);
+                clearviewport();
+                S.IncarcaScena();
+                setvisualpage(1);
+                visualpage = 1;
+            }
             if (renderSceneAgain) {
                 renderSceneAgain = false;
             }

@@ -8,6 +8,12 @@ static void InitializeMenu() {
     drawFilledRectangle(0, 30, 40, getmaxy(), COLOR(20, 20, 20));
 }
 static void InitializeInterface() {
+    setactivepage(0);
     InitializeMenu();
+
+    setactivepage(1);
+    InitializeMenu();
+    setactivepage(0);
+
     InitializeButtons();
 }

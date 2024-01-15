@@ -25,3 +25,4 @@ int selectedCorp = -1;
 std::string selectedCorpName = "";
 bool editMode = false;
 int selectedStrat = 0;
+int visualpage = 0;
