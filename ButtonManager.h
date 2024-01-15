@@ -18,6 +18,7 @@
 vector<Button> buttons;
 
 static void InitializeButtons() {
+    setactivepage(0);
     //New file button
     Button newFileButton = *new Button("New file", 0, 0, 90, 30); //button 0
     newFileButton.drawButton = []() {
@@ -379,4 +380,27 @@ static void InitializeButtons() {
     };
     facesView.drawButton();
     buttons.push_back(facesView);
+
+    setactivepage(1);
+    newFileButton.drawButton();
+    openFileButton.drawButton();
+    draw_line.drawButton();
+    draw_rectangle.drawButton();
+    draw_circle.drawButton();
+    add_point.drawButton();
+    link_points.drawButton();
+    angle_minus.drawButton();
+    angle_plus.drawButton();
+    dp1.drawButton();
+    dp5.drawButton();
+    dp10.drawButton();
+    apply_changes.drawButton();
+    new_3D_form.drawButton();
+    delete_object.drawButton();
+    reset_object.drawButton();
+    reset_scene.drawButton();
+    saveFileButton.drawButton();
+    editButton.drawButtonDif();
+    facesView.drawButton();
+    setactivepage(0);
 }
