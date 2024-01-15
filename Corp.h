@@ -385,7 +385,9 @@ public:
 				index++;
 			}
 		}
-
+	}
+	void AdaugareFata(std::vector<int> v) {
+		faces.push_back(v);
 	}
 	///Determina centrul si colturile corpului
 	void DeterminaCentru_Colturi()

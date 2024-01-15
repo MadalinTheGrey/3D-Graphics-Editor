@@ -5,6 +5,7 @@
 
 std::vector<Button> menuButtons;
 std::vector<Button> points;
+std::vector<Button> colors;
 std::vector<int> sPoints;
 
 bool _closeFacesWindow = false;
@@ -12,16 +13,41 @@ double _thisZoom = 1.0f;
 int _thisOffsetX = 0;
 int _thisOffsetY = 0;
 
+int color = BLACK;
+
+Corp selectedC;
+
+void Reload() {
+	clearviewport();
+	selectedC.AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
+}
+void CreateFace() {
+	printf("Yaaayy");
+	if (sPoints.size() >= 3) {
+		sPoints.push_back(color);
+		selectedC.AdaugareFata(sPoints);
+		Reload();
+		sPoints.pop_back();
+	}
+
+}
 void SelectPoint(int index) {
 	points[index].drawButtonDif();
-	sPoints.push_back(index);
+	bool ok = true;
+	for (auto x : sPoints) {
+		if (x == index) {
+			ok = false;
+			break;
+		}
+	}
+	if(ok)
+		sPoints.push_back(index);
 }
 void Edit() {
-	Corp ct = S.corpuri[S.corpuri_selectate[0]];
 	int index = 0;
 	points.clear();
 	sPoints.clear();
-	for (auto& punct : ct.puncte) {
+	for (auto& punct : selectedC.puncte) {
 		Punct pct = Punct::Punct3Dto2D(punct);
 		pct.x = _thisZoom * pct.x + _thisOffsetX;
 		pct.y = _thisZoom * pct.y + _thisOffsetY;
@@ -33,7 +59,6 @@ void Edit() {
 			drawEmptyCircle((temp.x1 + temp.x2) / 2, (temp.y1 + temp.y2) / 2, 3, GREEN, 4);
 			};
 		temp.onClick = [temp, index] {
-			printf("Punct: %s\n", temp.name.c_str());
 			SelectPoint(index);
 			};
 		temp.drawButton();
@@ -67,21 +92,114 @@ void Buttons() {
 	};
 	edit.drawButton();
 	menuButtons.push_back(edit);
-}
-void Reload() {
-	clearviewport();
-	S.corpuri[S.corpuri_selectate[0]].AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
+	Button save = *new Button("Save", 100, 0, 200, 30);
+	save.drawButton = [save] {
+		drawLine(save.x2, save.y1, save.x2, save.y2, COLOR(182, 182, 182));
+		writeText(save.x1 + 35, save.y1 + 25, "Save", COLOR(182, 182, 182), 1, COLOR(35, 35, 35));
+	};
+	save.onClick = [] {
+		S.corpuri[S.corpuri_selectate[0]] = selectedC;
+		_closeFacesWindow = true;
+	};
+	save.drawButton();
+	menuButtons.push_back(save);
+
+	//COLORS
+	Button red = *new Button("red", 500, 0,530, 30);
+	red.drawButton = [red] {
+	drawFilledRectangle(red.x1, red.y1, red.x2, red.y2, RED);
+	}; 
+	red.drawButton();
+	red.onClick = [] {
+		color = RED;
+		CreateFace();
+	};
+	Button yellow = *new Button("yellow", 530, 0, 560, 30);
+	yellow.drawButton = [yellow] {
+		drawFilledRectangle(yellow.x1, yellow.y1, yellow.x2, yellow.y2, YELLOW);
+	}; 
+	yellow.drawButton();
+	yellow.onClick = [] {
+		color = YELLOW;
+		CreateFace();
+	};
+	Button blue = *new Button("blue", 560, 0, 590, 30);
+	blue.drawButton = [blue] {
+		drawFilledRectangle(blue.x1, blue.y1, blue.x2, blue.y2, BLUE);
+	}; 
+	blue.drawButton();
+	blue.onClick = [] {
+		color = BLUE;
+		CreateFace();
+	};
+	Button lblue = *new Button("lblue", 590, 0, 620, 30);
+	lblue.drawButton = [lblue] {
+		drawFilledRectangle(lblue.x1, lblue.y1, lblue.x2, lblue.y2, LIGHTBLUE);
+	}; 
+	lblue.drawButton();
+	lblue.onClick = [] {
+		color = LIGHTBLUE;
+		CreateFace();
+	};
+	Button green = *new Button("green", 620, 0, 650, 30);
+	green.drawButton = [green] {
+		drawFilledRectangle(green.x1, green.y1, green.x2, green.y2, GREEN);
+	}; 
+	green.drawButton();
+	green.onClick = [] {
+		color = GREEN;
+		CreateFace();
+	};
+	Button lgreen = *new Button("lgreen", 650, 0, 680, 30);
+	lgreen.drawButton = [lgreen] {
+		drawFilledRectangle(lgreen.x1, lgreen.y1, lgreen.x2, lgreen.y2, LIGHTGREEN);
+	}; 
+	lgreen.drawButton();
+	lgreen.onClick = [] {
+		color = LIGHTGREEN;
+		CreateFace();
+	};
+	Button white = *new Button("white", 680, 0, 710, 30);
+	white.drawButton = [white] {
+		drawFilledRectangle(white.x1, white.y1, white.x2, white.y2, WHITE);
+	}; white.drawButton();
+	white.onClick = [] {
+		color = WHITE;
+		CreateFace();
+	};
+	Button black = *new Button("black", 710, 0, 740, 30);
+	black.drawButton = [black] {
+		drawFilledRectangle(black.x1, black.y1, black.x2, black.y2, BLACK);
+	}; 
+	black.drawButton();
+	black.onClick = [] {
+		color = BLACK;
+		CreateFace();
+	};
+	colors.push_back(red);
+	colors.push_back(blue);
+	colors.push_back(yellow);
+	colors.push_back(lblue);
+	colors.push_back(green);
+	colors.push_back(lgreen);
+	colors.push_back(white);
+	colors.push_back(black);
 }
 void ShowFaces() {
 	initwindow(1280, 720, "Faces", windowPosX, windowPosY);
 	menuButtons.clear();
+	colors.clear();
 	_closeFacesWindow = false;
+	_thisZoom = 1.0f;
+	_thisOffsetX = 0;
+	_thisOffsetY = 0;
+	selectedC = S.corpuri[S.corpuri_selectate[0]];
 
 	Top();
 	Buttons();
 	setviewport(0, 30, 1280, 720, 1);
 	setbkcolor(BLACK);
-	S.corpuri[S.corpuri_selectate[0]].AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
+	selectedC.AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
 
 
 	while (!_closeFacesWindow) {
@@ -94,16 +212,28 @@ void ShowFaces() {
 					b.onClick();
 				}
 			}
-			y -= 30;
-			for (auto& p : points) {
-				if (x > p.x1 && x < p.x2 && y > p.y1 && y < p.y2) {
-					p.onClick();
+			if (!_closeFacesWindow) {
+				for (auto& b : colors) {
+					if (x > b.x1 && x < b.x2 && y > b.y1 && y < b.y2) {
+						b.onClick();
+					}
 				}
+				y -= 30;
+				for (auto& p : points) {
+					if (x > p.x1 && x < p.x2 && y > p.y1 && y < p.y2) {
+						p.onClick();
+					}
+				}
+				printf("Points: ");
+				for (auto x : sPoints) {
+					printf("%i, ", x);
+				}
+				printf("\n");
 			}
 		}
 		if (GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState(VK_UP) || GetAsyncKeyState(VK_DOWN)
 			||GetAsyncKeyState(0x46) || GetAsyncKeyState(0x47)) {
-			if (GetAsyncKeyState(0x46)) {
+			if (GetAsyncKeyState(0x46) || !_closeFacesWindow) {
 				_thisZoom += 0.01f;
 			}
 			if (GetAsyncKeyState(0x47)) {
