@@ -1,5 +1,4 @@
-#ifndef INC_3D_EDITOR_V2_OPENFILEWINDOW_H
-#define INC_3D_EDITOR_V2_OPENFILEWINDOW_H
+#pragma once
 #include <string>
 #include "graphics.h"
 #include <iostream>
@@ -150,5 +149,3 @@ string receivePathToFile(int first = 0) {
     }
     return  "null";
 }
-
-#endif //INC_3D_EDITOR_V2_OPENFILEWINDOW_H

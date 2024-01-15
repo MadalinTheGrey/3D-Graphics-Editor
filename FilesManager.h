@@ -1,6 +1,4 @@
-#ifndef INC_3D_EDITOR_V2_FILESMANAGER_H
-#define INC_3D_EDITOR_V2_FILESMANAGER_H
-
+#pragma once
 #include "graphics.h"
 #include <fstream>
 #include "Corp.h"
@@ -66,4 +64,3 @@ void SaveObjectInFile(string path) {
     }
     fout.close();
 }
-#endif //INC_3D_EDITOR_V2_FILESMANAGER_H

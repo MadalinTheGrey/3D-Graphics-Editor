@@ -1,6 +1,4 @@
-#ifndef INC_3D_EDITOR_V2_RENDER3D_H
-#define INC_3D_EDITOR_V2_RENDER3D_H
-
+#pragma once
 #include <iostream>
 #include <vector>
 #include "Corp.h"
@@ -84,5 +82,3 @@ void render3D() {
         delay(1);
     }
 }
-
-#endif //INC_3D_EDITOR_V2_RENDER3D_H

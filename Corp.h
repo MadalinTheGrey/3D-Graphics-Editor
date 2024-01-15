@@ -1,6 +1,4 @@
-#ifndef CORP_H
-#define CORP_H
-
+#pragma once
 #include "GlobalVariables.h"
 #include <math.h>
 #include <vector>
@@ -684,4 +682,3 @@ public:
 		}
 	}
 } S;
-#endif // !CORP_H

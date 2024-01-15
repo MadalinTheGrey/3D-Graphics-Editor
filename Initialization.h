@@ -1,5 +1,4 @@
-#ifndef INC_3D_EDITOR_V2_INTERFACE_H
-#define INC_3D_EDITOR_V2_INTERFACE_H
+#pragma once
 #include "myGraphics.h"
 #include "ButtonManager.h"
 
@@ -12,4 +11,3 @@ static void InitializeInterface() {
     InitializeMenu();
     InitializeButtons();
 }
-#endif //INC_3D_EDITOR_V2_INTERFACE_H

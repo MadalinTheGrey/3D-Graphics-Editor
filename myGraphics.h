@@ -1,5 +1,4 @@
-#ifndef INC_3D_EDITOR_V2_MYGRAPHICS_H
-#define INC_3D_EDITOR_V2_MYGRAPHICS_H
+#pragma once
 #define _USE_MATH_DEFINES
 #include "graphics.h"
 #include "GlobalVariables.h"
@@ -81,4 +80,3 @@ static void writeText(int x, int y, char text[], int color = BLACK, int size = 1
     outtextxy(0, 0, text);
     setviewport(oldV.left, oldV.top, oldV.right, oldV.bottom, 1);
 }
-#endif //INC_3D_EDITOR_V2_MYGRAPHICS_H

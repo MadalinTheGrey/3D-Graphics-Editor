@@ -1,5 +1,4 @@
-#ifndef INC_3D_EDITOR_V2_GLOBALVARIABLES_H
-#define INC_3D_EDITOR_V2_GLOBALVARIABLES_H
+#pragma once
 
 #define BLACK 0x000000
 #define PI 3.14159265358979323846
@@ -26,4 +25,3 @@ int selectedCorp = -1;
 std::string selectedCorpName = "";
 bool editMode = false;
 int selectedStrat = 0;
-#endif //INC_3D_EDITOR_V2_GLOBALVARIABLES_H
