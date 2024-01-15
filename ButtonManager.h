@@ -402,5 +402,8 @@ static void InitializeButtons() {
     saveFileButton.drawButton();
     editButton.drawButtonDif();
     facesView.drawButton();
+    writeText(1130, 381, "Rotation angle:", COLOR(182, 182, 182), 1, COLOR(20, 20, 20)); //x = 1120 -> 1230, y = 355 -> 385
+    writeText(1130, 451, "Draw precision:", COLOR(182, 182, 182), 1, COLOR(20, 20, 20)); //x = 1120 -> 1230, y = 425 -> 455
+
     setactivepage(0);
 }

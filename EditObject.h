@@ -11,13 +11,25 @@ int stratsOffset = 0;
 void SelectStrat(int s) {
 	selectedStrat = s;
 	setviewport(0, 0, 1280, 720, 1);
+	setactivepage(0);
 	drawFilledRectangle(1080, 30, 1280, 300, COLOR(20, 20, 20));
+	setactivepage(1);
+	drawFilledRectangle(1080, 30, 1280, 300, COLOR(20, 20, 20));
+	setactivepage(visualpage);
 	for (auto& st : strats) {
 		if (st.name == to_string(s)) {
+			setactivepage(0);
 			st.drawButtonDif();
+			setactivepage(1);
+			st.drawButtonDif();
+			setactivepage(visualpage);
 		}
 		else {
+			setactivepage(0);
 			st.drawButton();
+			setactivepage(1);
+			st.drawButton();
+			setactivepage(visualpage);
 		}
 	}
 	setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
@@ -25,7 +37,11 @@ void SelectStrat(int s) {
 }
 void DisplayStrats(bool resetSts = true) {
 	setviewport(0, 0, 1280, 720, 1);
+	setactivepage(0);
 	drawFilledRectangle(1080, 30, 1280, 300, COLOR(20,20,20));
+	setactivepage(1);
+	drawFilledRectangle(1080, 30, 1280, 300, COLOR(20, 20, 20));
+	setactivepage(visualpage);
 	//drawFilledRectangle(1080, 300, 1280, 350, BLUE);
 	strats.clear();
 	set<int> sts;
@@ -57,7 +73,11 @@ void DisplayStrats(bool resetSts = true) {
 				renderSceneAgain = 1;
 			}
 		};
+		setactivepage(0);
 		temp.drawButton();
+		setactivepage(1);
+		temp.drawButton();
+		setactivepage(visualpage);
 		strats.push_back(temp);
 		y += 30;
 	}
@@ -158,6 +178,7 @@ void CleanUp() {
 		editButtonSelectable = false;
 	renderSceneAgain = 1;
 	setviewport(0, 0, 1280, 720, 1);
+	setactivepage(0);
 	drawFilledRectangle(1080, 30, 1280, 355, COLOR(20, 20, 20));
 	int x1 = 1120, y1 = 60, x2 = 1230, y2 = 90;
 	drawEmptyRectangle(x1, y1, x2, y2, WHITE);
@@ -175,11 +196,31 @@ void CleanUp() {
 		drawLine(x1 + 90, y1, x1 + 100, y2, WHITE);
 		drawLine(x1 + 100, y1, x1 + 110, y2, WHITE);
 	}
+	setactivepage(1);
+	drawFilledRectangle(1080, 30, 1280, 355, COLOR(20, 20, 20));
+	x1 = 1120, y1 = 60, x2 = 1230, y2 = 90;
+	drawEmptyRectangle(x1, y1, x2, y2, WHITE);
+	writeText(x1 + 25, y1 + 25, "Edit object", WHITE, 1, COLOR(20, 20, 20));
+	if (!editButtonSelectable) {
+		drawLine(x1, y1, x1 + 10, y2, WHITE);
+		drawLine(x1 + 10, y1, x1 + 20, y2, WHITE);
+		drawLine(x1 + 20, y1, x1 + 30, y2, WHITE);
+		drawLine(x1 + 30, y1, x1 + 40, y2, WHITE);
+		drawLine(x1 + 40, y1, x1 + 50, y2, WHITE);
+		drawLine(x1 + 50, y1, x1 + 60, y2, WHITE);
+		drawLine(x1 + 60, y1, x1 + 70, y2, WHITE);
+		drawLine(x1 + 70, y1, x1 + 80, y2, WHITE);
+		drawLine(x1 + 80, y1, x1 + 90, y2, WHITE);
+		drawLine(x1 + 90, y1, x1 + 100, y2, WHITE);
+		drawLine(x1 + 100, y1, x1 + 110, y2, WHITE);
+	}
+	setactivepage(visualpage);
 	setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
 	setbkcolor(BLACK);
 }
 void DisplayMenus() {
 	setviewport(0, 0, 1280, 720, 1);
+	setactivepage(0);
 	menuStratsButtons.clear();
 	Button closeButton = *new Button("Close button", 1080, 315, 1150, 345);
 	closeButton.drawButton = [closeButton] {
@@ -226,6 +267,15 @@ void DisplayMenus() {
 	menuStratsButtons.push_back(upBT);
 	menuStratsButtons.push_back(downBT);
 	menuStratsButtons.push_back(addButton);
+
+	setactivepage(1);
+	closeButton.drawButton();
+	upBT.drawButton();
+	downBT.drawButton();
+	addButton.drawButton();
+
+	setactivepage(visualpage);
+
 	setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
 	setbkcolor(BLACK);
 }

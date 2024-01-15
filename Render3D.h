@@ -81,11 +81,11 @@ void render3D() {
                 visualpage = 1;
             }
             else {
-                setactivepage(1);
+                setactivepage(0);
                 clearviewport();
                 S.IncarcaScena();
-                setvisualpage(1);
-                visualpage = 1;
+                setvisualpage(0);
+                visualpage = 0;
             }
             if (renderSceneAgain) {
                 renderSceneAgain = false;

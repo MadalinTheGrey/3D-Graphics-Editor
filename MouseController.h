@@ -83,16 +83,30 @@ void checkMouseClick(int x, int y) {
         }
     }
     if (S.corpuri_selectate.size() == 1 && !editButtonSelectable && !editMode) {
+        setactivepage(0);
         setviewport(0, 0, 1280, 720, 1);
         buttons[18].drawButton();
         setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
         setbkcolor(BLACK);
+        setactivepage(1);
+        setviewport(0, 0, 1280, 720, 1);
+        buttons[18].drawButton();
+        setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
+        setbkcolor(BLACK);
+        setactivepage(visualpage);
     }
     else if(S.corpuri_selectate.size() != 1 && editButtonSelectable && !editMode) {
+        setactivepage(0);
         setviewport(0, 0, 1280, 720, 1);
         buttons[18].drawButtonDif();
         setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
         setbkcolor(BLACK);
+        setactivepage(1);
+        setviewport(0, 0, 1280, 720, 1);
+        buttons[18].drawButtonDif();
+        setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
+        setbkcolor(BLACK);
+        setactivepage(visualpage);
     }
     if (editMode && S.corpuri_selectate.size() == 1) {
         for (auto& btn : strats) {
