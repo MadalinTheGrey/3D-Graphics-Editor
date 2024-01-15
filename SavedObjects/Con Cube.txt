@@ -1,0 +1,85 @@
+Corp: UnCub
+Punct: 300 300 0
+Punct: 400 300 0
+Punct: 400 400 0
+Punct: 300 400 0
+Punct: 300 300 100
+Punct: 400 300 100
+Punct: 400 400 100
+Punct: 300 400 100
+Linie: 0 1
+Linie: 1 2
+Linie: 2 3
+Linie: 3 0
+Linie: 4 5
+Linie: 5 6
+Linie: 6 7
+Linie: 7 4
+Linie: 0 4
+Linie: 1 5
+Linie: 2 6
+Linie: 3 7
+EndCorp
+Corp: Corp1
+Punct: 540.404 270.046 17.868
+Punct: 550.214 272.755 14.3079
+Punct: 561.73 275.199 15.143
+Punct: 573.822 277.138 20.2914
+Punct: 585.309 278.383 29.2492
+Punct: 595.065 278.813 41.1397
+Punct: 602.136 278.383 54.7987
+Punct: 605.828 277.138 68.8894
+Punct: 605.782 275.199 82.0324
+Punct: 602.001 272.755 92.9412
+Punct: 594.856 270.046 100.548
+Punct: 585.046 267.337 104.108
+Punct: 573.531 264.893 103.273
+Punct: 561.438 262.953 98.1246
+Punct: 549.951 261.708 89.1668
+Punct: 540.195 261.279 77.2763
+Punct: 533.125 261.708 63.6173
+Punct: 529.432 262.953 49.5266
+Punct: 529.478 264.893 36.3836
+Punct: 533.259 267.337 25.4748
+Punct: 568.076 182.624 -49.6487
+Linie: 1 0
+Linie: 2 1
+Linie: 3 2
+Linie: 4 3
+Linie: 5 4
+Linie: 6 5
+Linie: 7 6
+Linie: 8 7
+Linie: 9 8
+Linie: 10 9
+Linie: 11 10
+Linie: 12 11
+Linie: 13 12
+Linie: 14 13
+Linie: 15 14
+Linie: 16 15
+Linie: 17 16
+Linie: 18 17
+Linie: 19 18
+Linie: 19 0
+Linie: 20 17
+Linie: 20 4
+Linie: 20 11
+Linie: 20 16
+Linie: 20 15
+Linie: 20 14
+Linie: 20 13
+Linie: 20 12
+Linie: 20 10
+Linie: 20 9
+Linie: 20 7
+Linie: 20 8
+Linie: 20 6
+Linie: 20 5
+Linie: 20 18
+Linie: 20 19
+Linie: 20 0
+Linie: 20 1
+Linie: 20 2
+Linie: 20 3
+EndCorp
