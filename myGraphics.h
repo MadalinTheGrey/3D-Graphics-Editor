@@ -36,7 +36,7 @@ static void drawLine(int x1, int y1, int x2, int y2, int color = WHITE, int thic
 }
 static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
 {
-    struct viewporttype vinfo;
+    /*struct viewporttype vinfo;
     getviewsettings(&vinfo);
     if (x1 < vinfo.left)
         x1 = vinfo.left;
@@ -45,19 +45,11 @@ static void drawEmptyRectangle(int x1, int y1, int x2, int y2, int color = WHITE
     if (y1 < vinfo.top)
         y1 = vinfo.top;
     if (y2 > vinfo.bottom)
-        y2 = vinfo.bottom;
+        y2 = vinfo.bottom;*/
     drawLine(x1, y1, x2, y1, color, thickness, style);
     drawLine(x1, y1, x1, y2, color, thickness, style);
     drawLine(x1, y2, x2, y2, color, thickness, style);
     drawLine(x2, y1, x2, y2, color, thickness, style);
-}
-static void drawCircle(int x1, int y1, int x2, int y2, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
-{
-    double diametru = y2 - y1, raza = diametru / 2, lungime = 2 * PI * raza;
-    double centru_x = (double)(x1 + x2) / 2, centru_y = (double)(y1 + y2) / 2;
-    int nr_puncte = abs(y2 - y1) / 4;
-    if (nr_puncte & 1) nr_puncte++;
-
 }
 
 static void drawEmptyCircle(int x, int y, int raza, int color = WHITE, int thickness = 1, int style = SOLID_LINE)
@@ -87,6 +79,6 @@ static void writeText(int x, int y, char text[], int color = BLACK, int size = 1
     setviewport(x1, y1, x2, y2, 1);
     setbkcolor(bgcolor);
     outtextxy(0, 0, text);
-    setviewport(oldV.left, oldV.top, oldV.right, oldV.bottom,1);
+    setviewport(oldV.left, oldV.top, oldV.right, oldV.bottom, 1);
 }
 #endif //INC_3D_EDITOR_V2_MYGRAPHICS_H

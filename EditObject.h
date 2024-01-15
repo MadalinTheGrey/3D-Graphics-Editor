@@ -29,8 +29,8 @@ void DisplayStrats(bool resetSts = true) {
 	//drawFilledRectangle(1080, 300, 1280, 350, BLUE);
 	strats.clear();
 	set<int> sts;
-	for (auto& pct : S.corpuri[selectedCorp].puncte) {
-		sts.insert(pct.z);
+	for (auto& sect : S.corpuri[selectedCorp].sectiuni) {
+		sts.insert(sect.z);
 	}
 	for (auto x : extraAddedStrats) {
 		sts.insert(x);
@@ -161,7 +161,7 @@ void CleanUp() {
 	drawFilledRectangle(1080, 30, 1280, 355, COLOR(20, 20, 20));
 	int x1 = 1120, y1 = 60, x2 = 1230, y2 = 90;
 	drawEmptyRectangle(x1, y1, x2, y2, WHITE);
-	writeText(x1 + 25, y1 + 25, "Edit Button", WHITE, 1, COLOR(20, 20, 20));
+	writeText(x1 + 25, y1 + 25, "Edit object", WHITE, 1, COLOR(20, 20, 20));
 	if (!editButtonSelectable) {
 		drawLine(x1, y1, x1 + 10, y2, WHITE);
 		drawLine(x1 + 10, y1, x1 + 20, y2, WHITE);

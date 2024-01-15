@@ -21,18 +21,23 @@ void readFromFile(string path) {
                 nume = read;
                 vector<Punct3D> puncte;
                 vector<Linie> linii;
+                vector<Sectiune> sect;
                 while (read != "EndCorp") {
                     fin >> read;
                     if (read == "Punct:") {
                         fin >> r1 >> r2 >> r3;
-                        puncte.push_back(*new Punct3D(stoi(r1), stoi(r2), stoi(r3)));
+                        int z = stoi(r3);
+                        puncte.push_back(*new Punct3D(stoi(r1), stoi(r2), z));
+                        bool exists = false;
+                        for (auto& sct : sect)
+                            if (sct.z == z) exists = true;
+                        if (!exists) sect.push_back(Sectiune(z));
                     }
                     else if (read == "Linie:") {
                         fin >> r1 >> r2;
                         linii.push_back(*new Linie(stoi(r1), stoi(r2)));
                     }
                 }
-                vector<Sectiune> sect;
                 Punct offset = { 0, 0 };
                 Corp corp(puncte, linii, sect, offset, nume);
                 scena.corpuri.push_back(corp);
@@ -49,12 +54,12 @@ void SaveObjectInFile(string path) {
     path = ppath + "\\SavedObjects\\" + path;
     printf("Saving object in path %s\n", path.c_str());
     ofstream fout(path.c_str());
-    for (auto corp : S.corpuri) {
+    for (auto& corp : S.corpuri) {
         fout << "Corp: " << corp.name << endl;
-        for (auto punct : corp.puncte) {
+        for (auto& punct : corp.puncte) {
             fout << "Punct: " << punct.x << " " << punct.y << " " << punct.z << endl;
         }
-        for (auto linie : corp.linii) {
+        for (auto& linie : corp.linii) {
             fout << "Linie: " << linie.A << " " << linie.B << endl;
         }
         fout << "EndCorp" << endl;

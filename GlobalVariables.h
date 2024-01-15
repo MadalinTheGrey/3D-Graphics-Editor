@@ -25,5 +25,5 @@ bool editButtonSelectable = false;
 int selectedCorp = -1;
 std::string selectedCorpName = "";
 bool editMode = false;
-int selectedStrat = -1;
+int selectedStrat = 0;
 #endif //INC_3D_EDITOR_V2_GLOBALVARIABLES_H

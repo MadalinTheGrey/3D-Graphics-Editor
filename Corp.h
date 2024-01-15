@@ -152,9 +152,7 @@ public:
 class Sectiune
 {
 public:
-	std::vector<Linie> linii_sect; //memoreaza indicii liniilor sectiunii din vectorul de linii al corpului
 	int z; ///pozitia pe axa z a sectiunii
-
 	//---------------------------------Constructori-------------------------------------------
 
 	Sectiune()
@@ -167,42 +165,20 @@ public:
 		z = poz_z;
 	}
 
-	Sectiune(int poz_z, std::vector<Linie> B)
-	{
-		linii_sect = move(B);
-		z = poz_z;
-	}
-
 	//--------------------------------Operatori--------------------------------------------
 
 	bool operator==(Sectiune sect)
 	{
-		if (sect.z == z && linii_sect.size() == sect.linii_sect.size())
-		{
-			for (int i = 0; i < linii_sect.size(); i++)
-				if (linii_sect[i] != sect.linii_sect[i])
-					return false;
+		if (sect.z == z)
 			return true;
-		}
 		return false;
 	}
 
 	bool operator!=(Sectiune sect)
 	{
-		if (sect.z == z && linii_sect.size() == sect.linii_sect.size())
-		{
-			for (int i = 0; i < linii_sect.size(); i++)
-				if (linii_sect[i] != sect.linii_sect[i])
-					return true;
+		if (sect.z == z)
 			return false;
-		}
 		return true;
-	}
-
-	//-----------------------------------Metode-----------------------------------
-	void AddLinie(Linie L)
-	{
-		linii_sect.push_back(L);
 	}
 };
 
@@ -304,9 +280,9 @@ public:
 			P1.y = zoom * (P1.y - tl_corner.y) + tl_corner.y - offsetY - offset_local.y;
 			P2.x = zoom * (P2.x - tl_corner.x) + tl_corner.x - offsetX - offset_local.x;
 			P2.y = zoom * (P2.y - tl_corner.y) + tl_corner.y - offsetY - offset_local.y;
-			if(puncte[l.A].z == selectedStrat && puncte[l.B].z == selectedStrat && editMode && selectedCorpName == this->name)
+			if (puncte[l.A].z == selectedStrat && puncte[l.B].z == selectedStrat && editMode && selectedCorpName == this->name)
 				drawLine(P1.x, P1.y, P2.x, P2.y, GREEN);
-			else 
+			else
 				drawLine(P1.x, P1.y, P2.x, P2.y, WHITE);
 		}
 	}
@@ -476,6 +452,8 @@ public:
 	void AdaugareCorp()
 	{
 		Corp C;
+		int len = corpuri.size();
+		C.name = "Corp" + std::to_string(len);
 		corpuri.push_back(C);
 		corpuri_selectate.push_back(corpuri.size() - 1);
 	}
@@ -544,6 +522,11 @@ public:
 	///deseneaza o linie pe ecran pentru user
 	void UserDrawLine(int mouse_x, int mouse_y, int draw_step, int z_pos, int ind_corp)
 	{
+		bool exists = false;
+		for (auto& sect : corpuri[ind_corp].sectiuni)
+			if (sect.z == selectedStrat)
+				exists = true;
+		if (!exists) corpuri[ind_corp].sectiuni.push_back(Sectiune(selectedStrat));
 		if (draw_step == 0)
 		{
 			Punct P(mouse_x, mouse_y);
@@ -552,7 +535,7 @@ public:
 		else if (draw_step == 1)
 		{
 			Punct P(mouse_x, mouse_y);
-			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
 			int len = corpuri[ind_corp].puncte.size();
 			corpuri[ind_corp].AdaugareLinie(Linie(len - 2, len - 1));
 			clearviewport();
@@ -563,6 +546,11 @@ public:
 	///deseneaza un dreptunghi pe ecran pentru user
 	void UserDrawRectangle(int mouse_x, int mouse_y, int draw_step, int z_pos, int ind_corp)
 	{
+		bool exists = false;
+		for (auto& sect : corpuri[ind_corp].sectiuni)
+			if (sect.z == selectedStrat)
+				exists = true;
+		if (!exists) corpuri[ind_corp].sectiuni.push_back(Sectiune(selectedStrat));
 		if (draw_step == 0)
 		{
 			Punct P(mouse_x, mouse_y);
@@ -574,9 +562,9 @@ public:
 			int len = corpuri[ind_corp].puncte.size();
 			Punct P1 = Punct::Punct3Dto2D(corpuri[ind_corp].puncte[len - 1]);
 			P1.ConvertCoord();
-			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(Punct(mouse_x, P1.y), z_pos));
-			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
-			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(Punct(P1.x, mouse_y), z_pos));
+			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(Punct(mouse_x, P1.y), z_pos));
+			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(Punct(P1.x, mouse_y), z_pos));
 			len = corpuri[ind_corp].puncte.size();
 			corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - 4));
 			corpuri[ind_corp].AdaugareLinie(Linie(len - 4, len - 3));
@@ -590,10 +578,15 @@ public:
 	///deseneaza un cerc pe ecran pentru user
 	void UserDrawCircle(int mouse_x, int mouse_y, int draw_step, int z_pos, int ind_corp)
 	{
+		bool exists = false;
+		for (auto& sect : corpuri[ind_corp].sectiuni)
+			if (sect.z == selectedStrat)
+				exists = true;
+		if (!exists) corpuri[ind_corp].sectiuni.push_back(Sectiune(selectedStrat));
 		if (draw_step == 0)
 		{
 			Punct P(mouse_x, mouse_y);
-			S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+			corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
 		}
 		else if (draw_step == 1)
 		{
@@ -601,7 +594,7 @@ public:
 			Punct P(mouse_x, mouse_y);
 			Punct P1 = Punct::Punct3Dto2D(S.corpuri[ind_corp].puncte[len - 1]);
 			P1.ConvertCoord();
-			S.corpuri[ind_corp].EliminaPunct(); //eliminam punctul adaugat pentru referinta
+			corpuri[ind_corp].EliminaPunct(); //eliminam punctul adaugat pentru referinta
 			len--;
 			Punct centru((P.x + P1.x) / 2, (P.y + P1.y) / 2);
 			double width = abs(P.x - P1.x), height = abs(P.y - P1.y), a = width / 2, b = height / 2;
@@ -610,11 +603,11 @@ public:
 			for (double i = 0; i < nr_puncte; i++)
 			{
 				Punct A(centru.x + a * cos(i * unghi_dif), centru.y + b * sin(i * unghi_dif));
-				S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(A, z_pos));
+				corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(A, z_pos));
 				len++;
 				if (i > 0) S.corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - 2));
 			}
-			S.corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - nr_puncte));
+			corpuri[ind_corp].AdaugareLinie(Linie(len - 1, len - nr_puncte));
 			clearviewport();
 			IncarcaScena();
 		}
@@ -622,8 +615,13 @@ public:
 
 	void UserAddPoint(int mouse_x, int mouse_y, int z_pos, int ind_corp)
 	{
+		bool exists = false;
+		for (auto& sect : corpuri[ind_corp].sectiuni)
+			if (sect.z == selectedStrat)
+				exists = true;
+		if (!exists) corpuri[ind_corp].sectiuni.push_back(Sectiune(selectedStrat));
 		Punct P(mouse_x, mouse_y);
-		S.corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
+		corpuri[ind_corp].AdaugarePunct(Punct::Punct2Dto3D(P, z_pos));
 		clearviewport();
 		IncarcaScena();
 	}
@@ -637,7 +635,7 @@ public:
 		{
 			for (int i = 0; i < S.corpuri[ind_corp].puncte.size(); i++)
 			{
-				Punct3D P = S.corpuri[ind_corp].puncte[i];
+				Punct3D P = corpuri[ind_corp].puncte[i];
 				P1 = Punct::Punct3Dto2D(P);
 				P1.ConvertCoord();
 				diff_x = abs(P1.x - mouse_x);
@@ -653,9 +651,9 @@ public:
 		else
 		{
 			int punct_nou = 0;
-			for (int i = 0; i < S.corpuri[ind_corp].puncte.size(); i++)
+			for (int i = 0; i < corpuri[ind_corp].puncte.size(); i++)
 			{
-				Punct3D P = S.corpuri[ind_corp].puncte[i];
+				Punct3D P = corpuri[ind_corp].puncte[i];
 				P1 = Punct::Punct3Dto2D(P);
 				P1.ConvertCoord();
 				diff_x = abs(P1.x - mouse_x);
@@ -667,7 +665,7 @@ public:
 					punct_nou = i;
 				}
 			}
-			S.corpuri[ind_corp].AdaugareLinie(Linie(punct_selectat, punct_nou));
+			corpuri[ind_corp].AdaugareLinie(Linie(punct_selectat, punct_nou));
 			clearviewport();
 			IncarcaScena();
 		}
@@ -680,8 +678,8 @@ public:
 			C.DeterminaCentru_Colturi();
 			C.AfisareCorp();
 			//evidentiaza corpurile selectate
-			for (auto& i : S.corpuri_selectate)
-				if (S.corpuri[i] == C)
+			for (auto& i : corpuri_selectate)
+				if (corpuri[i] == C)
 					drawEmptyRectangle(C.tl_corner.x - offsetX - C.offset_local.x - 10, C.tl_corner.y - offsetY - C.offset_local.y - 10, zoom * (C.lr_corner.x - C.tl_corner.x) + C.tl_corner.x - offsetX - C.offset_local.x + 10, zoom * (C.lr_corner.y - C.tl_corner.y) + C.tl_corner.y - offsetY - C.offset_local.y + 10, COLOR(118, 118, 118), 1, DOTTED_LINE);
 		}
 	}
