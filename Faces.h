@@ -12,14 +12,27 @@ bool _closeFacesWindow = false;
 double _thisZoom = 1.0f;
 int _thisOffsetX = 0;
 int _thisOffsetY = 0;
-
 int color = BLACK;
+
+int curentVisualPage = 0;
 
 Corp selectedC;
 
 void Reload() {
-	clearviewport();
-	selectedC.AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
+	if (curentVisualPage == 0) {
+		setactivepage(1);
+		clearviewport();
+		selectedC.AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
+		setvisualpage(1);
+		curentVisualPage = 1;
+	}
+	else {
+		setactivepage(0);
+		clearviewport();
+		selectedC.AfisareCorpFete(_thisZoom, _thisOffsetX, _thisOffsetY);
+		setvisualpage(0);
+		curentVisualPage = 0;
+	}
 }
 void CreateFace() {
 	printf("Yaaayy");
@@ -29,7 +42,7 @@ void CreateFace() {
 		Reload();
 		sPoints.pop_back();
 	}
-
+	Sleep(500);
 }
 void SelectPoint(int index) {
 	points[index].drawButtonDif();
@@ -53,10 +66,10 @@ void Edit() {
 		pct.y = _thisZoom * pct.y + _thisOffsetY;
 		Button temp = *new Button(to_string(punct.x) + " " + to_string(punct.y) + " " + to_string(punct.z), pct.x - 4, pct.y - 4, pct.x + 4, pct.y + 4);
 		temp.drawButton = [temp] {
-			drawEmptyCircle((temp.x1 + temp.x2) / 2, (temp.y1 + temp.y2) / 2, 3, RED, 4);
+			drawEmptyCircle((temp.x1 + temp.x2) / 2, (temp.y1 + temp.y2) / 2, 3*_thisZoom, RED, 5*_thisZoom);
 			};
 		temp.drawButtonDif = [temp] {
-			drawEmptyCircle((temp.x1 + temp.x2) / 2, (temp.y1 + temp.y2) / 2, 3, GREEN, 4);
+			drawEmptyCircle((temp.x1 + temp.x2) / 2, (temp.y1 + temp.y2) / 2, 3*_thisZoom, GREEN, 5*_thisZoom);
 			};
 		temp.onClick = [temp, index] {
 			SelectPoint(index);
@@ -67,9 +80,14 @@ void Edit() {
 	}
 }
 void Top() {
+	setactivepage(0);
 	drawFilledRectangle(0, 0, getmaxx(), 30, COLOR(35, 35, 35));
+	setactivepage(1);
+	drawFilledRectangle(0, 0, getmaxx(), 30, COLOR(35, 35, 35));
+	setactivepage(0);
 }
 void Buttons() {
+	setactivepage(0);
 	Button close = *new Button("Close", 1170, 0, 1270, 30);
 	close.drawButton = [close] {
 		drawLine(close.x1, close.y1, close.x1, close.y2, COLOR(182, 182, 182));
@@ -184,6 +202,19 @@ void Buttons() {
 	colors.push_back(lgreen);
 	colors.push_back(white);
 	colors.push_back(black);
+	setactivepage(1);
+	red.drawButton();
+	blue.drawButton();
+	yellow.drawButton();
+	lblue.drawButton();
+	green.drawButton();
+	lgreen.drawButton();
+	white.drawButton();
+	black.drawButton();
+	save.drawButton();
+	edit.drawButton();
+	close.drawButton();
+	setactivepage(0);
 }
 void ShowFaces() {
 	initwindow(1280, 720, "Faces", windowPosX, windowPosY);
@@ -193,6 +224,7 @@ void ShowFaces() {
 	_thisZoom = 1.0f;
 	_thisOffsetX = 0;
 	_thisOffsetY = 0;
+	curentVisualPage = 0;
 	selectedC = S.corpuri[S.corpuri_selectate[0]];
 
 	Top();
@@ -214,7 +246,7 @@ void ShowFaces() {
 			}
 			if (!_closeFacesWindow) {
 				for (auto& b : colors) {
-					if (x > b.x1 && x < b.x2 && y > b.y1 && y < b.y2) {
+					if (x > b.x1 && x < b.x2 && y > b.y1 && y < b.y2 && !_closeFacesWindow) {
 						b.onClick();
 					}
 				}
@@ -232,8 +264,8 @@ void ShowFaces() {
 			}
 		}
 		if (GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState(VK_UP) || GetAsyncKeyState(VK_DOWN)
-			||GetAsyncKeyState(0x46) || GetAsyncKeyState(0x47)) {
-			if (GetAsyncKeyState(0x46) || !_closeFacesWindow) {
+			||GetAsyncKeyState(0x46) || GetAsyncKeyState(0x47) && !_closeFacesWindow) {
+			if (GetAsyncKeyState(0x46)) {
 				_thisZoom += 0.01f;
 			}
 			if (GetAsyncKeyState(0x47)) {
@@ -257,6 +289,7 @@ void ShowFaces() {
 	}
 
 	closegraph(CURRENT_WINDOW);
+	curentVisualPage = 0;
 	setcurrentwindow(1);
 	setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
 	setbkcolor(BLACK);

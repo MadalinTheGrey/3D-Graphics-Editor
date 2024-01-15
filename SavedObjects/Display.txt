@@ -1,0 +1,105 @@
+Corp: Corp0
+Punct: 330 170 -40
+Punct: 640 170 30
+Punct: 640 390 30
+Punct: 330 390 -40
+Punct: 340 180 -40
+Punct: 630 180 30
+Punct: 630 380 30
+Punct: 340 380 -40
+Punct: 350 190 10
+Punct: 670 190 90
+Punct: 670 410 90
+Punct: 350 410 20
+Punct: 450 390 -10
+Punct: 500 390 0
+Punct: 490 420 0
+Punct: 450 420 -10
+Punct: 470 420 40
+Punct: 520 420 60
+Punct: 520 450 60
+Punct: 470 450 40
+Punct: 430 420 -20
+Punct: 500 420 0
+Punct: 500 430 0
+Punct: 427 430 -20
+Punct: 450 450 40
+Punct: 530 450 60
+Punct: 530 460 60
+Punct: 450 460 40
+Linie: 3 0
+Linie: 0 1
+Linie: 1 2
+Linie: 2 3
+Linie: 7 4
+Linie: 4 5
+Linie: 5 6
+Linie: 6 7
+Linie: 11 8
+Linie: 8 9
+Linie: 9 10
+Linie: 10 11
+Linie: 15 12
+Linie: 12 13
+Linie: 13 14
+Linie: 14 15
+Linie: 19 16
+Linie: 16 17
+Linie: 17 18
+Linie: 18 19
+Linie: 23 20
+Linie: 20 21
+Linie: 21 22
+Linie: 22 23
+Linie: 27 24
+Linie: 24 25
+Linie: 25 26
+Linie: 26 27
+Linie: 11 3
+Linie: 8 0
+Linie: 10 2
+Linie: 9 1
+Linie: 12 16
+Linie: 13 17
+Linie: 15 19
+Linie: 14 18
+Linie: 23 27
+Linie: 20 24
+Linie: 22 26
+Linie: 21 25
+Fata: 5E 3 7 4 0 9 
+Fata: 5E 6 2 1 5 9 
+Fata: 5E 4 0 5 1 10 
+Fata: 5E 0 4 5 1 10 
+Fata: 5E 7 6 2 3 10 
+Fata: 5E 0 8 11 3 9 
+Fata: 4E 6 10 7 10 
+Fata: 5E 11 7 6 10 10 
+Fata: 5E 1 5 6 2 9 
+Fata: 5E 5 9 10 6 9 
+Fata: 5E 16 19 15 12 9 
+Fata: 5E 17 13 14 18 9 
+Fata: 4E 15 14 19 9 
+Fata: 5E 18 19 15 14 9 
+Fata: 5E 24 27 23 20 10 
+Fata: 5E 23 21 22 20 10 
+Fata: 5E 20 23 22 21 10 
+Fata: 5E 24 20 21 25 10 
+Fata: 5E 15 19 18 14 9 
+Fata: 5E 4 7 5 6 14 
+Fata: 5E 4 5 7 6 15 
+EndCorp
+Corp: Corp1
+EndCorp
+Corp: Corp2
+EndCorp
+Corp: Corp3
+EndCorp
+Corp: Corp4
+EndCorp
+Corp: Corp5
+EndCorp
+Corp: Corp6
+EndCorp
+Corp: Corp7
+EndCorp

@@ -20,6 +20,7 @@ void readFromFile(string path) {
                 vector<Punct3D> puncte;
                 vector<Linie> linii;
                 vector<Sectiune> sect;
+                vector<vector<int>> fcs;
                 while (read != "EndCorp") {
                     fin >> read;
                     if (read == "Punct:") {
@@ -35,9 +36,22 @@ void readFromFile(string path) {
                         fin >> r1 >> r2;
                         linii.push_back(*new Linie(stoi(r1), stoi(r2)));
                     }
+                    else if (read == "Fata:") {
+                        fin >> r1;
+                        r1 = r1.substr(r1.size() - 2);
+                        int n = stoi(r1), x;
+                        vector<int> v;
+                        for (int i = 0; i < n; ++i) {
+                            fin >> r1;
+                            x = stoi(r1);
+                            v.push_back(x);
+                        }
+                        fcs.push_back(v);
+                    }
                 }
                 Punct offset = { 0, 0 };
                 Corp corp(puncte, linii, sect, offset, nume);
+                corp.faces = fcs;
                 scena.corpuri.push_back(corp);
             }
         }
@@ -59,6 +73,14 @@ void SaveObjectInFile(string path) {
         }
         for (auto& linie : corp.linii) {
             fout << "Linie: " << linie.A << " " << linie.B << endl;
+        }
+        for (auto& f : corp.faces) {
+            fout << "Fata: ";
+            fout << f.size() << "E ";
+            for (auto& x : f) {
+                fout << x << ' ';
+            }
+            fout << '\n';
         }
         fout << "EndCorp" << endl;
     }
