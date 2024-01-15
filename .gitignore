@@ -1,4 +1,5 @@
 /Debug
+/Release
 /.vs
 /ipch
 bgi.cxx
@@ -24,3 +25,4 @@ winbgi.h
 winbgim.h
 winbgitypes.h
 winthread.cxx
+bgi.exe
