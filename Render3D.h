@@ -9,6 +9,12 @@ void render3D() {
     setviewport(vp_tl_x, vp_tl_y, vp_dr_x, vp_dr_y, 1);
     setbkcolor(BLACK);
     clearviewport();
+    vector<int> spate = { 4, 5 ,6 ,7, MAGENTA };
+    vector<int> dreapta = { 1,2,6,5, LIGHTBLUE };
+    vector<int> stanga = { 0,3,7,4, LIGHTGREEN };
+    vector<int> jos = { 2,3,7,6, GREEN };
+    vector<int> sus = { 0, 1, 5, 4, BLUE };
+    vector<int> fata = { 0,1,2,3, RED };
     S.IncarcaScena();
     while (true) {
         if (GetAsyncKeyState(VK_ESCAPE) != 0)

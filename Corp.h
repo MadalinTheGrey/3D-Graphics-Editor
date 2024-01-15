@@ -3,6 +3,7 @@
 #include <math.h>
 #include <vector>
 #include <string>
+#include <set>
 
 class Punct3D
 {
@@ -195,6 +196,7 @@ public:
 	std::vector<Punct3D> puncte_origin; //va memora pozitia punctelor inainte de rotatie sau alte miscari
 	std::vector<Linie> linii;
 	std::vector<Linie> linii_origin; //va memora liniile originale ale corpului
+	std::vector<std::vector<int>> faces;
 
 	//--------------------------------Constructori------------------------------------------
 
@@ -284,7 +286,107 @@ public:
 				drawLine(P1.x, P1.y, P2.x, P2.y, WHITE);
 		}
 	}
+	void AfisareCorpFete(double tzoom, int offsetX, int offsetY) {
 
+		for (auto& l : linii) {
+			Punct P1, P2;
+			P1 = Punct::Punct3Dto2D(puncte[l.A]);
+			P2 = Punct::Punct3Dto2D(puncte[l.B]);
+			P1.ConvertCoord();
+			P2.ConvertCoord();
+			P1.x = tzoom * P1.x + offsetX;
+			P1.y = tzoom * P1.y + offsetY;
+			P2.x = tzoom * P2.x + offsetX;
+			P2.y = tzoom * P2.y + offsetY;
+			drawLine(P1.x, P1.y, P2.x, P2.y, WHITE);
+		}
+
+		printf("Afisare zoom: %i\n", tzoom);
+		std::vector<Punct> puncte2D;
+		for (auto& p : puncte) {
+			Punct P = Punct::Punct3Dto2D(p);
+			P.ConvertCoord();
+			P.x = tzoom * P.x + offsetX;
+			P.y = tzoom * P.y + offsetY;
+			puncte2D.push_back(P);
+		}
+		std::set<int> strats;
+		for (auto& p : puncte) {
+			strats.insert(p.z);
+		}
+		std::vector<int> v;
+		for (auto x : strats) {
+			v.push_back(x);
+		}
+		reverse(v.begin(), v.end());
+
+		int fr[100];
+		for (int i = 0; i < 100; ++i) {
+			fr[i] = 0;
+		}
+		for (auto s : v) {
+			//Cautam intai fete care au puncte cu acelasi Z
+			int index = 0;
+			for (auto f : faces) {
+				if (fr[index] == 0) {
+					int aux = f[f.size() - 1]; f.pop_back();
+					bool ok = true;
+					for (auto x : f) {
+						if (puncte[x].z != s) {
+							ok = false;
+							break;
+						}
+					}
+					if (ok) {
+						fr[index] = 1;
+						int fxy[20]; int index = 0;
+						//cream poligonul 
+						for (auto p : f) {
+							fxy[index++] = puncte2D[p].x;
+							fxy[index++] = puncte2D[p].y;
+						}
+						fxy[index++] = puncte2D[f[0]].x;
+						fxy[index] = puncte2D[f[0]].y;
+						setfillstyle(SOLID_FILL, aux);
+						fillpoly(f.size(), fxy);
+					}
+					f.push_back(aux);
+				}
+				index++;
+			}
+			//Cautam fete care au macar o coordonata z = s
+			index = 0;
+			for (auto f : faces) {
+				if (fr[index] == 0) {
+					int aux = f[f.size() - 1]; f.pop_back();
+					bool ok = false;
+					for (auto x : f) {
+						if ((int)puncte[x].z == s) {
+							ok = true;
+							break;
+						}
+					}
+					if (ok) {
+
+						fr[index] = 1;
+						int fxy[20]; int index = 0;
+						//cream poligonul 
+						for (auto p : f) {
+							fxy[index++] = puncte2D[p].x;
+							fxy[index++] = puncte2D[p].y;
+						}
+						fxy[index++] = puncte2D[f[0]].x;
+						fxy[index] = puncte2D[f[0]].y;
+						setfillstyle(SOLID_FILL, aux);
+						fillpoly(f.size(), fxy);
+					}
+					f.push_back(aux);
+				}
+				index++;
+			}
+		}
+
+	}
 	///Determina centrul si colturile corpului
 	void DeterminaCentru_Colturi()
 	{
