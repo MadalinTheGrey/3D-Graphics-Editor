@@ -18,54 +18,60 @@ void checkMouseClick(int x, int y) {
         if (2 <= last_clicked_button && last_clicked_button <= 6)
         {
             int c; //ultima cifra a pozitiei mouse-ului pe ecran
-            x -= vp_tl_x; y -= vp_tl_y;
+            int mx = x - vp_tl_x;
+            int my = y - vp_tl_y;
+
+
             if (draw_precision == 5)
             {
-                c = x % 10;
+                c = mx % 10;
                 if (c > 5) c -= 5;
-                if (c >= 3) x += (5 - c);
-                else x -= c;
-                c = y % 10;
+                if (c >= 3) mx += (5 - c);
+                else mx -= c;
+                c = my % 10;
                 if (c > 5) c -= 5;
-                if (c >= 3) y += (5 - c);
-                else y -= c;
+                if (c >= 3) my += (5 - c);
+                else my -= c;
             }
             else if (draw_precision == 10)
             {
-                c = x % 10;
-                if (c > 5) x += (10 - c);
-                else x -= c;
-                c = y % 10;
-                if (c > 5) y += (10 - c);
-                else y -= c;
+                c = mx % 10;
+                if (c > 5) mx += (10 - c);
+                else mx -= c;
+                c = mx % 10;
+                if (c > 5) mx += (10 - c);
+                else mx -= c;
             }
+            mx = (mx + offsetX + S.corpuri[S.corpuri_selectate[0]].offset_local.x - S.corpuri[S.corpuri_selectate[0]].tl_corner.x) / zoom + S.corpuri[S.corpuri_selectate[0]].tl_corner.x;
+            my = (my + offsetY + S.corpuri[S.corpuri_selectate[0]].offset_local.y - S.corpuri[S.corpuri_selectate[0]].tl_corner.y) / zoom + S.corpuri[S.corpuri_selectate[0]].tl_corner.y;
+            
             if (buttons[last_clicked_button].name == "Draw Line" && S.corpuri_selectate.size() == 1)
             {
                 int i = S.corpuri_selectate[0];
-                S.UserDrawLine(x, y, form_draw_step, selectedStrat, i);
+                S.UserDrawLine(mx, my, form_draw_step, selectedStrat, i);
                 form_draw_step = 1 - form_draw_step;
             }
             else if (buttons[last_clicked_button].name == "Draw rectangle" && S.corpuri_selectate.size() == 1)
             {
                 int i = S.corpuri_selectate[0];
-                S.UserDrawRectangle(x, y, form_draw_step, selectedStrat, i);
+                S.UserDrawRectangle(mx, my, form_draw_step, selectedStrat, i);
                 form_draw_step = 1 - form_draw_step;
             }
             else if (buttons[last_clicked_button].name == "Draw circle" && S.corpuri_selectate.size() == 1)
             {
                 int i = S.corpuri_selectate[0];
-                S.UserDrawCircle(x, y, form_draw_step, selectedStrat, i);
+                S.UserDrawCircle(mx, my, form_draw_step, selectedStrat, i);
                 form_draw_step = 1 - form_draw_step;
             }
             else if (buttons[last_clicked_button].name == "Add point" && S.corpuri_selectate.size() == 1)
             {
                 int i = S.corpuri_selectate[0];
-                S.UserAddPoint(x, y, selectedStrat, i);
+                S.UserAddPoint(mx, my, selectedStrat, i);
             }
             else if (buttons[last_clicked_button].name == "Link points" && S.corpuri_selectate.size() == 1)
             {
                 int i = S.corpuri_selectate[0];
-                S.UserLinkPoints(x, y, form_draw_step, i);
+                S.UserLinkPoints(mx, my, form_draw_step, i);
                 form_draw_step = 1 - form_draw_step;
             }
         }

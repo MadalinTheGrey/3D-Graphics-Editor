@@ -151,6 +151,8 @@ static void InitializeButtons() {
                 for (auto& P : S.corpuri[i].puncte)
                 {
                     Punct P1 = Punct::Punct3Dto2D(P);
+                    P1.x = zoom * (P1.x - S.corpuri[i].tl_corner.x) + S.corpuri[i].tl_corner.x - offsetX - S.corpuri[i].offset_local.x;
+                    P1.y = zoom * (P1.y - S.corpuri[i].tl_corner.y) + S.corpuri[i].tl_corner.y - offsetY - S.corpuri[i].offset_local.y;
                     drawEmptyCircle(P1.x, P1.y, 2, BLUE, 3);
                 }
             }
