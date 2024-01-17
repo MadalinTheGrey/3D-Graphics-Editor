@@ -26,3 +26,4 @@ winbgim.h
 winbgitypes.h
 winthread.cxx
 bgi.exe
+*.bmp
