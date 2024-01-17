@@ -15,6 +15,7 @@
 #include "EditObject.h"
 #include "NewFileWindow.h"
 #include "Faces.h"
+#include "Screenshot.h"
 vector<Button> buttons;
 
 static void InitializeButtons() {
@@ -383,6 +384,18 @@ static void InitializeButtons() {
     facesView.drawButton();
     buttons.push_back(facesView);
 
+    //Screenshot button
+    Button screenshot = *new Button("ScreenShot", 370, 0, 480, 30);
+    screenshot.drawButton = [screenshot] {
+        drawLine(screenshot.x2, screenshot.y1, screenshot.x2, screenshot.y2, COLOR(182, 182, 182));
+        writeText(screenshot.x1 + 10, screenshot.y1 + 25, "Screenshot", COLOR(182,182,182), 1, COLOR(35,35,35));
+    };
+    screenshot.onClick = [] {
+        SaveScreenShot();
+    };
+    screenshot.drawButton();
+    buttons.push_back(screenshot);
+
     setactivepage(1);
     newFileButton.drawButton();
     openFileButton.drawButton();
@@ -404,6 +417,7 @@ static void InitializeButtons() {
     saveFileButton.drawButton();
     editButton.drawButtonDif();
     facesView.drawButton();
+    screenshot.drawButton();
     writeText(1130, 381, "Rotation angle:", COLOR(182, 182, 182), 1, COLOR(20, 20, 20)); //x = 1120 -> 1230, y = 355 -> 385
     writeText(1130, 451, "Draw precision:", COLOR(182, 182, 182), 1, COLOR(20, 20, 20)); //x = 1120 -> 1230, y = 425 -> 455
 
