@@ -2,6 +2,7 @@
 #include "graphics.h"
 #include "myGraphics.h"
 #include "Button.h"
+#include "Screenshot.h"
 
 std::vector<Button> menuButtons;
 std::vector<Button> points;
@@ -122,6 +123,16 @@ void Buttons() {
 	save.drawButton();
 	menuButtons.push_back(save);
 
+	Button screenshot = *new Button("Screenshot", 200, 0, 350, 30);
+	screenshot.drawButton = [screenshot] {
+		drawLine(screenshot.x2, screenshot.y1, screenshot.x2, screenshot.y2, COLOR(182, 182, 182));
+		writeText(screenshot.x1 + 35, screenshot.y1 + 25, "Screenshot", COLOR(182, 182, 182), 1, COLOR(35, 35, 35));
+		};
+	screenshot.onClick = [] {
+		SaveScreenShot(1);
+	};
+	screenshot.drawButton();
+	menuButtons.push_back(screenshot);
 	//COLORS
 	Button red = *new Button("red", 500, 0,530, 30);
 	red.drawButton = [red] {
