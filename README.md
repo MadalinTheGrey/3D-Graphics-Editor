@@ -1,6 +1,7 @@
 # 3D-Graphics-Editor
 
-Obiective: 
+Se foloseste de libraria grafica winbgim.
+Features:
   - reprezentare si vizualizare corpuri 3D
   - rotire corpuri 3D
   - salvarea corpurilor create/editate in fisiere si posibilitatea de a le incarca din acele fisiere
