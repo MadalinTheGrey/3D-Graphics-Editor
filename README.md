@@ -1,4 +1,4 @@
-# 3D-Graphics-Editor :skull: 
+# 3D-Graphics-Editor
 
 Obiective: 
   - reprezentare si vizualizare corpuri 3D
