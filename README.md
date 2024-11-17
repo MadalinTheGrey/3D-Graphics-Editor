@@ -1,6 +1,7 @@
 # 3D-Graphics-Editor
 
 Se foloseste de libraria grafica winbgim.
+
 Features:
   - reprezentare si vizualizare corpuri 3D
   - rotire corpuri 3D
